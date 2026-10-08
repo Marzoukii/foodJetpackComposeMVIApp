@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.foodapp.ui.admin.AdminOrdersRoute
 import com.example.foodapp.ui.cart.CartRoute
 import com.example.foodapp.ui.checkout.CheckoutRoute
 import com.example.foodapp.ui.components.BottomTab
@@ -74,8 +75,13 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
                 onNavigateToMealDetails = { navController.navigate(Routes.mealDetails(it)) },
                 onNavigateToSearch = { navController.navigate(Routes.SEARCH) },
                 onNavigateToCart = { navController.navigate(Routes.CART) },
+                onNavigateToAdminOrders = { navController.navigate(Routes.ADMIN_ORDERS) },
                 onTabSelected = onTabSelected
             )
+        }
+
+        composable(Routes.ADMIN_ORDERS) {
+            AdminOrdersRoute(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(

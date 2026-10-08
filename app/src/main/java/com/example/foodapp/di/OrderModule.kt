@@ -11,10 +11,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object OrderModule {
 
-    /** L'URL de la base est lue depuis google-services.json (champ firebase_url). */
+    /** Base hors us-central1 : son URL doit être donnée explicitement. */
+    private const val DATABASE_URL = "https://foodapp-74c79-default-rtdb.europe-west1.firebasedatabase.app"
+
     @Provides
     @Singleton
     fun provideFirebaseDatabase(): FirebaseDatabase {
-        return FirebaseDatabase.getInstance()
+        return FirebaseDatabase.getInstance(DATABASE_URL)
     }
 }

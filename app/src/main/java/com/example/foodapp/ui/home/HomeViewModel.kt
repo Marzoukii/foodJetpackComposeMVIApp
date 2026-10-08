@@ -8,6 +8,7 @@ import com.example.foodapp.domain.usecase.GetCategoriesUseCase
 import com.example.foodapp.domain.usecase.GetDeliveryAddressUseCase
 import com.example.foodapp.domain.usecase.GetMealsByCategoryUseCase
 import com.example.foodapp.domain.usecase.GetRandomMealUseCase
+import com.example.foodapp.domain.usecase.ObserveIsAdminUseCase
 import com.example.foodapp.domain.usecase.SignOutUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ class HomeViewModel @Inject constructor(
     getCartItemsUseCase: GetCartItemsUseCase,
     getDeliveryAddressUseCase: GetDeliveryAddressUseCase,
     getAuthStateUseCase: GetAuthStateUseCase,
+    observeIsAdminUseCase: ObserveIsAdminUseCase,
     private val signOutUseCase: SignOutUseCase
 ) : MviViewModel<HomeState, HomeIntent, HomeEffect>(HomeState()) {
 
@@ -38,6 +40,10 @@ class HomeViewModel @Inject constructor(
 
         getAuthStateUseCase.execute()
             .onEach { user -> setState { copy(user = user) } }
+            .launchIn(viewModelScope)
+
+        observeIsAdminUseCase.execute()
+            .onEach { isAdmin -> setState { copy(isAdmin = isAdmin) } }
             .launchIn(viewModelScope)
 
         onIntent(HomeIntent.Load)
@@ -57,6 +63,10 @@ class HomeViewModel @Inject constructor(
                 setState { copy(isAccountDialogVisible = false) }
                 signOutUseCase.execute()
                 sendEffect(HomeEffect.NavigateToLogin)
+            }
+            HomeIntent.AdminOrdersClicked -> {
+                setState { copy(isAccountDialogVisible = false) }
+                sendEffect(HomeEffect.NavigateToAdminOrders)
             }
         }
     }

@@ -49,6 +49,7 @@ import com.example.foodapp.ui.components.ErrorView
 import com.example.foodapp.ui.components.LoadingView
 import com.example.foodapp.ui.components.MealGridCard
 import com.example.foodapp.ui.components.MealImage
+import com.example.foodapp.ui.components.OutlinedPillButton
 import com.example.foodapp.ui.components.SearchField
 import com.example.foodapp.ui.components.Tag
 import com.example.foodapp.ui.theme.FoodAppTheme
@@ -64,6 +65,7 @@ fun HomeRoute(
     onNavigateToMealDetails: (String) -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
+    onNavigateToAdminOrders: () -> Unit,
     onTabSelected: (BottomTab) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -77,6 +79,7 @@ fun HomeRoute(
                 HomeEffect.NavigateToSearch -> onNavigateToSearch()
                 HomeEffect.NavigateToCart -> onNavigateToCart()
                 HomeEffect.NavigateToLogin -> onNavigateToLogin()
+                HomeEffect.NavigateToAdminOrders -> onNavigateToAdminOrders()
             }
         }
     }
@@ -107,6 +110,8 @@ fun HomeScreen(
     if (state.isAccountDialogVisible) {
         AccountDialog(
             user = state.user,
+            isAdmin = state.isAdmin,
+            onAdminOrders = { onIntent(HomeIntent.AdminOrdersClicked) },
             onSignOut = { onIntent(HomeIntent.SignOutClicked) },
             onDismiss = { onIntent(HomeIntent.DismissAccountDialog) }
         )
@@ -192,20 +197,31 @@ private fun HomeHeader(address: String, cartCount: Int, onAccountClick: () -> Un
     }
 }
 
-/** Compte connecté : nom, e-mail et déconnexion. */
+/** Compte connecté : nom, e-mail, gestion des commandes (admin) et déconnexion. */
 @Composable
-private fun AccountDialog(user: UserModel?, onSignOut: () -> Unit, onDismiss: () -> Unit) {
+private fun AccountDialog(
+    user: UserModel?,
+    isAdmin: Boolean,
+    onAdminOrders: () -> Unit,
+    onSignOut: () -> Unit,
+    onDismiss: () -> Unit
+) {
     val colors = MaterialTheme.colorScheme
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(BoucheeIcons.User, contentDescription = null, tint = colors.primary) },
         title = { Text(user?.name?.takeIf { it.isNotBlank() } ?: "Mon compte") },
         text = {
-            Text(
-                user?.email.orEmpty(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.onSurfaceVariant
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.m)) {
+                Text(
+                    user?.email.orEmpty(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.onSurfaceVariant
+                )
+                if (isAdmin) {
+                    OutlinedPillButton(text = "Gérer les commandes", onClick = onAdminOrders, modifier = Modifier.fillMaxWidth())
+                }
+            }
         },
         confirmButton = {
             TextButton(onClick = onSignOut) {

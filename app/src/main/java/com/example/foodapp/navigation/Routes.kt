@@ -17,6 +17,7 @@ object Routes {
     const val CART = "cart"
     const val CHECKOUT = "checkout"
     const val CONFIRMATION = "confirmation/{$ARG_ORDER_NUMBER}"
+    const val ADMIN_ORDERS = "admin/orders"
 
     /** Sans catégorie, le menu ouvre la première catégorie. */
     fun menu(category: String? = null) =

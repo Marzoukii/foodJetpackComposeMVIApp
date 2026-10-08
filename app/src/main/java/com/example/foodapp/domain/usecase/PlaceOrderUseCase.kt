@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import kotlin.random.Random
 
 /** Enregistre la commande dans Realtime Database (statut RECEIVED), puis vide le panier. */
 class PlaceOrderUseCase @Inject constructor(
@@ -28,9 +27,7 @@ class PlaceOrderUseCase @Inject constructor(
             return@flow
         }
         val items = cartRepository.getCartItems().first()
-        val orderNumber = Random.nextInt(100_000, 999_999).toString()
         orderRepository.createOrder(
-            orderNumber = orderNumber,
             userId = user.id,
             items = items,
             address = address,

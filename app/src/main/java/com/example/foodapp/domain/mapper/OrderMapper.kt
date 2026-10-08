@@ -15,7 +15,15 @@ class OrderMapper @Inject constructor() {
             createdAt = snapshot.child("createdAt").getValue(Long::class.java) ?: 0L,
             statusHistory = snapshot.child("statusHistory").children.associate {
                 OrderStatus.from(it.key) to (it.getValue(Long::class.java) ?: 0L)
-            }
+            },
+            address = snapshot.child("address").getValue(String::class.java).orEmpty(),
+            itemCount = snapshot.child("items").children.sumOf {
+                it.child("quantity").getValue(Int::class.java) ?: 0
+            },
+            totalCents = snapshot.child("totalCents").getValue(Int::class.java) ?: 0
         )
     }
+
+    fun mapOrders(snapshot: DataSnapshot): List<OrderModel> =
+        snapshot.children.mapNotNull { mapOrder(it) }
 }

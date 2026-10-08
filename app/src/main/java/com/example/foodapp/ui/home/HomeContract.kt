@@ -17,7 +17,9 @@ data class HomeState(
     val popularMeals: List<MealItemModel> = emptyList(),
     val cartCount: Int = 0,
     val user: UserModel? = null,
-    val isAccountDialogVisible: Boolean = false
+    val isAccountDialogVisible: Boolean = false,
+    /** Compte présent dans admins/{uid} : accès à la gestion des commandes. */
+    val isAdmin: Boolean = false
 )
 
 sealed interface HomeIntent {
@@ -30,6 +32,7 @@ sealed interface HomeIntent {
     data object AccountClicked : HomeIntent
     data object DismissAccountDialog : HomeIntent
     data object SignOutClicked : HomeIntent
+    data object AdminOrdersClicked : HomeIntent
 }
 
 sealed interface HomeEffect {
@@ -38,4 +41,5 @@ sealed interface HomeEffect {
     data object NavigateToSearch : HomeEffect
     data object NavigateToCart : HomeEffect
     data object NavigateToLogin : HomeEffect
+    data object NavigateToAdminOrders : HomeEffect
 }

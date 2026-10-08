@@ -1,5 +1,6 @@
 package com.example.foodapp.ui.checkout
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.usecase.GetCartItemsUseCase
@@ -77,6 +78,7 @@ class CheckoutViewModel @Inject constructor(
                         when (result) {
                             is NetworkResult.Success -> sendEffect(CheckoutEffect.NavigateToConfirmation(result.data.orEmpty()))
                             is NetworkResult.Error -> {
+                                Log.w(TAG, "Échec de l'envoi de la commande", result.exception)
                                 setState { copy(isPlacingOrder = false) }
                                 sendEffect(CheckoutEffect.ShowMessage("Impossible d'envoyer la commande, vérifiez votre connexion"))
                             }
@@ -85,5 +87,9 @@ class CheckoutViewModel @Inject constructor(
                     .launchIn(viewModelScope)
             }
         }
+    }
+
+    private companion object {
+        const val TAG = "Checkout"
     }
 }

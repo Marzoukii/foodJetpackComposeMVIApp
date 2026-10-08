@@ -16,5 +16,8 @@ data class OrderModel(
     val orderNumber: String,
     val status: OrderStatus,
     val createdAt: Long,
-    val statusHistory: Map<OrderStatus, Long>
+    val statusHistory: Map<OrderStatus, Long>,
+    val address: String,
+    val itemCount: Int,
+    val totalCents: Int
 )
