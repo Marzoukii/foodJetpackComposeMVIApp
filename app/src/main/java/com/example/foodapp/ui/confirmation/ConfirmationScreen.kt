@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.domain.model.OrderStatus
 import com.example.foodapp.ui.components.BoucheeIcons
 import com.example.foodapp.ui.components.OutlinedCard
 import com.example.foodapp.ui.components.PrimaryButton
@@ -173,5 +174,10 @@ private fun TimelineStep(step: OrderStep, isLast: Boolean) {
 @Preview(showBackground = true, widthDp = 390, heightDp = 844)
 @Composable
 private fun ConfirmationPreview() {
-    FoodAppTheme { ConfirmationScreen(state = ConfirmationState(orderNumber = "482913"), onIntent = {}) }
+    FoodAppTheme {
+        ConfirmationScreen(
+            state = ConfirmationState(orderNumber = "482913", orderStatus = OrderStatus.PREPARING),
+            onIntent = {}
+        )
+    }
 }

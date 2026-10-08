@@ -1,6 +1,7 @@
 package com.example.foodapp.ui.checkout
 
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.usecase.GetCartItemsUseCase
 import com.example.foodapp.domain.usecase.GetDeliveryAddressUseCase
 import com.example.foodapp.domain.usecase.PlaceOrderUseCase
@@ -9,7 +10,6 @@ import com.example.foodapp.ui.base.MviViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,10 +65,24 @@ class CheckoutViewModel @Inject constructor(
                 sendEffect(CheckoutEffect.ShowMessage("Ajoutez une adresse de livraison"))
                 setState { copy(isEditingAddress = true, addressDraft = address) }
             }
-            else -> viewModelScope.launch {
+            else -> {
                 setState { copy(isPlacingOrder = true) }
-                val orderNumber = placeOrderUseCase.execute()
-                sendEffect(CheckoutEffect.NavigateToConfirmation(orderNumber))
+                placeOrderUseCase.execute(
+                    address = state.address,
+                    deliveryMode = state.deliveryMode.name,
+                    paymentMethod = state.paymentMethod.name,
+                    deliveryCents = state.deliveryCents
+                )
+                    .onEach { result ->
+                        when (result) {
+                            is NetworkResult.Success -> sendEffect(CheckoutEffect.NavigateToConfirmation(result.data.orEmpty()))
+                            is NetworkResult.Error -> {
+                                setState { copy(isPlacingOrder = false) }
+                                sendEffect(CheckoutEffect.ShowMessage("Impossible d'envoyer la commande, vérifiez votre connexion"))
+                            }
+                        }
+                    }
+                    .launchIn(viewModelScope)
             }
         }
     }

@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
@@ -91,12 +92,17 @@ fun AuthTextField(
                         autoCorrectEnabled = false,
                         imeAction = imeAction
                     ),
-                    keyboardActions = KeyboardActions(onAny = { onImeAction() }),
+                    // Seul « Terminé » est personnalisé : « Suivant » garde le passage au champ suivant.
+                    keyboardActions = KeyboardActions(onDone = { onImeAction() }),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
             if (isPassword) {
-                IconButton(onClick = onTogglePasswordVisibility) {
+                // Hors du parcours clavier : « Suivant » va directement au champ suivant.
+                IconButton(
+                    onClick = onTogglePasswordVisibility,
+                    modifier = Modifier.focusProperties { canFocus = false }
+                ) {
                     Icon(
                         imageVector = if (passwordVisible) BoucheeIcons.EyeOff else BoucheeIcons.Eye,
                         contentDescription = if (passwordVisible) "Masquer le mot de passe" else "Afficher le mot de passe",
