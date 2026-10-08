@@ -2,11 +2,13 @@ package com.example.foodapp.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.data.NetworkResult
+import com.example.foodapp.domain.usecase.GetAuthStateUseCase
 import com.example.foodapp.domain.usecase.GetCartItemsUseCase
 import com.example.foodapp.domain.usecase.GetCategoriesUseCase
 import com.example.foodapp.domain.usecase.GetDeliveryAddressUseCase
 import com.example.foodapp.domain.usecase.GetMealsByCategoryUseCase
 import com.example.foodapp.domain.usecase.GetRandomMealUseCase
+import com.example.foodapp.domain.usecase.SignOutUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +22,9 @@ class HomeViewModel @Inject constructor(
     private val getRandomMealUseCase: GetRandomMealUseCase,
     private val getMealsByCategoryUseCase: GetMealsByCategoryUseCase,
     getCartItemsUseCase: GetCartItemsUseCase,
-    getDeliveryAddressUseCase: GetDeliveryAddressUseCase
+    getDeliveryAddressUseCase: GetDeliveryAddressUseCase,
+    getAuthStateUseCase: GetAuthStateUseCase,
+    private val signOutUseCase: SignOutUseCase
 ) : MviViewModel<HomeState, HomeIntent, HomeEffect>(HomeState()) {
 
     init {
@@ -30,6 +34,10 @@ class HomeViewModel @Inject constructor(
 
         getDeliveryAddressUseCase.execute()
             .onEach { address -> setState { copy(deliveryAddress = address) } }
+            .launchIn(viewModelScope)
+
+        getAuthStateUseCase.execute()
+            .onEach { user -> setState { copy(user = user) } }
             .launchIn(viewModelScope)
 
         onIntent(HomeIntent.Load)
@@ -43,6 +51,13 @@ class HomeViewModel @Inject constructor(
             is HomeIntent.MealClicked -> sendEffect(HomeEffect.NavigateToMealDetails(intent.mealId))
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
             HomeIntent.CartClicked -> sendEffect(HomeEffect.NavigateToCart)
+            HomeIntent.AccountClicked -> setState { copy(isAccountDialogVisible = true) }
+            HomeIntent.DismissAccountDialog -> setState { copy(isAccountDialogVisible = false) }
+            HomeIntent.SignOutClicked -> {
+                setState { copy(isAccountDialogVisible = false) }
+                signOutUseCase.execute()
+                sendEffect(HomeEffect.NavigateToLogin)
+            }
         }
     }
 

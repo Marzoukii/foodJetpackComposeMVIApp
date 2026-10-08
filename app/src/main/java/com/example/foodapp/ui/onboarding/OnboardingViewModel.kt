@@ -28,10 +28,13 @@ class OnboardingViewModel @Inject constructor(
 
     override fun onIntent(intent: OnboardingIntent) {
         when (intent) {
-            OnboardingIntent.StartClicked,
+            OnboardingIntent.StartClicked -> {
+                completeOnboardingUseCase.execute()
+                sendEffect(OnboardingEffect.NavigateToRegister)
+            }
             OnboardingIntent.AlreadyHaveAccountClicked -> {
                 completeOnboardingUseCase.execute()
-                sendEffect(OnboardingEffect.NavigateToHome)
+                sendEffect(OnboardingEffect.NavigateToLogin)
             }
         }
     }

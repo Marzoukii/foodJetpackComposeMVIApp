@@ -14,8 +14,10 @@ import com.example.foodapp.ui.components.BottomTab
 import com.example.foodapp.ui.confirmation.ConfirmationRoute
 import com.example.foodapp.ui.details.MealDetailsRoute
 import com.example.foodapp.ui.home.HomeRoute
+import com.example.foodapp.ui.login.LoginRoute
 import com.example.foodapp.ui.menu.MenuRoute
 import com.example.foodapp.ui.onboarding.OnboardingRoute
+import com.example.foodapp.ui.register.RegisterRoute
 import com.example.foodapp.ui.search.SearchRoute
 
 @Composable
@@ -30,9 +32,36 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
     ) {
         composable(Routes.ONBOARDING) {
             OnboardingRoute(
-                onNavigateToHome = {
-                    navController.navigate(Routes.HOME) {
+                onNavigateToRegister = {
+                    navController.navigate(Routes.REGISTER) {
                         popUpTo(Routes.ONBOARDING) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.ONBOARDING) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Routes.LOGIN) {
+            LoginRoute(
+                onNavigateToHome = { navController.navigateClearingBackStack(Routes.HOME) },
+                onNavigateToRegister = {
+                    navController.navigate(Routes.REGISTER) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Routes.REGISTER) {
+            RegisterRoute(
+                onNavigateToHome = { navController.navigateClearingBackStack(Routes.HOME) },
+                onNavigateToLogin = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.REGISTER) { inclusive = true }
                     }
                 }
             )
@@ -40,6 +69,7 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
 
         composable(Routes.HOME) {
             HomeRoute(
+                onNavigateToLogin = { navController.navigateClearingBackStack(Routes.LOGIN) },
                 onNavigateToMenu = { navController.navigate(Routes.menu(it)) },
                 onNavigateToMealDetails = { navController.navigate(Routes.mealDetails(it)) },
                 onNavigateToSearch = { navController.navigate(Routes.SEARCH) },
@@ -109,6 +139,14 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
                 onNavigateToHome = { navController.popBackStack(Routes.HOME, inclusive = false) }
             )
         }
+    }
+}
+
+/** Connexion / déconnexion : la destination devient la seule de la pile (retour = quitter l'app). */
+private fun NavHostController.navigateClearingBackStack(route: String) {
+    navigate(route) {
+        popUpTo(graph.id) { inclusive = true }
+        launchSingleTop = true
     }
 }
 

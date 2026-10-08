@@ -40,7 +40,8 @@ import com.example.foodapp.ui.theme.Spacing
 
 @Composable
 fun OnboardingRoute(
-    onNavigateToHome: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -48,7 +49,8 @@ fun OnboardingRoute(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                OnboardingEffect.NavigateToHome -> onNavigateToHome()
+                OnboardingEffect.NavigateToRegister -> onNavigateToRegister()
+                OnboardingEffect.NavigateToLogin -> onNavigateToLogin()
             }
         }
     }

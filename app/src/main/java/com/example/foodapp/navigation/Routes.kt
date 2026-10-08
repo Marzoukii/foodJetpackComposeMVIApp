@@ -8,6 +8,8 @@ object Routes {
     const val ARG_ORDER_NUMBER = "orderNumber"
 
     const val ONBOARDING = "onboarding"
+    const val LOGIN = "login"
+    const val REGISTER = "register"
     const val HOME = "home"
     const val MENU = "menu?$ARG_CATEGORY={$ARG_CATEGORY}"
     const val MEAL_DETAILS = "meal/{$ARG_MEAL_ID}"
