@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -185,19 +186,33 @@ private fun MealDetailsContent(
             if (ingredients.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("Ingrédients", style = MaterialTheme.typography.titleMedium.copy(fontSize = MaterialTheme.typography.bodyLarge.fontSize))
+                    Text(
+                        "Touchez un ingrédient pour le retirer",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.onSurfaceVariant
+                    )
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(Spacing.s),
                         verticalArrangement = Arrangement.spacedBy(Spacing.s)
                     ) {
                         ingredients.forEach { (ingredient, measure) ->
+                            val removed = ingredient in state.removedIngredients
                             Surface(
+                                onClick = { onIntent(MealDetailsIntent.ToggleIngredient(ingredient)) },
                                 shape = CircleShape,
-                                color = colors.surfaceContainer,
-                                border = BorderStroke(1.dp, colors.outlineVariant)
+                                color = if (removed) colors.errorContainer else colors.surfaceContainer,
+                                border = BorderStroke(1.dp, if (removed) colors.error else colors.outlineVariant)
                             ) {
                                 Text(
-                                    text = if (measure.isBlank()) ingredient else "$ingredient · $measure",
-                                    style = MaterialTheme.typography.bodySmall,
+                                    text = when {
+                                        removed -> "Sans $ingredient"
+                                        measure.isBlank() -> ingredient
+                                        else -> "$ingredient · $measure"
+                                    },
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        textDecoration = if (removed) TextDecoration.LineThrough else null
+                                    ),
+                                    color = if (removed) colors.onErrorContainer else colors.onSurface,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                                 )
                             }

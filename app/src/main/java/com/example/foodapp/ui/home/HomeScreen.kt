@@ -2,6 +2,7 @@ package com.example.foodapp.ui.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,15 +39,19 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.domain.model.CategoryModel
 import com.example.foodapp.domain.model.MealModel
+import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.model.UserModel
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.components.BottomTab
 import com.example.foodapp.ui.components.BoucheeBottomBar
 import com.example.foodapp.ui.components.BoucheeIcons
 import com.example.foodapp.ui.components.CartIconButton
+import com.example.foodapp.ui.components.CircleIconButton
 import com.example.foodapp.ui.components.ErrorView
 import com.example.foodapp.ui.components.LoadingView
 import com.example.foodapp.ui.components.MealGridCard
 import com.example.foodapp.ui.components.MealImage
+import com.example.foodapp.ui.components.OutlinedPillButton
 import com.example.foodapp.ui.components.SearchField
 import com.example.foodapp.ui.components.Tag
 import com.example.foodapp.ui.theme.FoodAppTheme
@@ -56,10 +62,12 @@ import com.example.foodapp.ui.util.formatPrice
 
 @Composable
 fun HomeRoute(
+    onNavigateToOrderMode: (clearBackStack: Boolean) -> Unit,
     onNavigateToMenu: (String?) -> Unit,
     onNavigateToMealDetails: (String) -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToCart: () -> Unit,
+    onNavigateToAdminOrders: () -> Unit,
     onTabSelected: (BottomTab) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -72,6 +80,8 @@ fun HomeRoute(
                 is HomeEffect.NavigateToMealDetails -> onNavigateToMealDetails(effect.mealId)
                 HomeEffect.NavigateToSearch -> onNavigateToSearch()
                 HomeEffect.NavigateToCart -> onNavigateToCart()
+                is HomeEffect.NavigateToOrderMode -> onNavigateToOrderMode(effect.clearBackStack)
+                HomeEffect.NavigateToAdminOrders -> onNavigateToAdminOrders()
             }
         }
     }
@@ -98,6 +108,16 @@ fun HomeScreen(
             else -> HomeContent(state, onIntent, Modifier.padding(padding))
         }
     }
+
+    if (state.isAccountDialogVisible) {
+        AccountDialog(
+            user = state.user,
+            isAdmin = state.isAdmin,
+            onAdminOrders = { onIntent(HomeIntent.AdminOrdersClicked) },
+            onSignOut = { onIntent(HomeIntent.SignOutClicked) },
+            onDismiss = { onIntent(HomeIntent.DismissAccountDialog) }
+        )
+    }
 }
 
 @Composable
@@ -107,7 +127,17 @@ private fun HomeContent(state: HomeState, onIntent: (HomeIntent) -> Unit, modifi
         contentPadding = PaddingValues(start = Spacing.xl, end = Spacing.xl, top = Spacing.l, bottom = Spacing.xxl),
         verticalArrangement = Arrangement.spacedBy(Spacing.xxl)
     ) {
-        item { HomeHeader(state.deliveryAddress, state.cartCount) { onIntent(HomeIntent.CartClicked) } }
+        item {
+            HomeHeader(
+                orderType = state.orderType,
+                address = state.deliveryAddress,
+                tableNumber = state.tableNumber,
+                onModeClick = { onIntent(HomeIntent.ChangeOrderModeClicked) },
+                cartCount = state.cartCount,
+                onAccountClick = { onIntent(HomeIntent.AccountClicked) },
+                onCartClick = { onIntent(HomeIntent.CartClicked) }
+            )
+        }
 
         item {
             Text("On mange quoi aujourd'hui ?", style = MaterialTheme.typography.headlineMedium.copy(fontSize = MaterialTheme.typography.headlineMedium.fontSize * 1.07f))
@@ -151,22 +181,99 @@ private fun HomeContent(state: HomeState, onIntent: (HomeIntent) -> Unit, modifi
 }
 
 @Composable
-private fun HomeHeader(address: String, cartCount: Int, onCartClick: () -> Unit) {
+private fun HomeHeader(
+    orderType: OrderType,
+    address: String,
+    tableNumber: Int?,
+    onModeClick: () -> Unit,
+    cartCount: Int,
+    onAccountClick: () -> Unit,
+    onCartClick: () -> Unit
+) {
+    val isDineIn = orderType == OrderType.DINE_IN
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text("Livrer à", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        // Toucher le mode ramène à l'écran de démarrage pour en changer.
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onModeClick),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                if (isDineIn) "Sur place · changer" else "Livrer à · changer",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Icon(BoucheeIcons.Pin, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                Icon(
+                    if (isDineIn) BoucheeIcons.Table else BoucheeIcons.Pin,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                )
                 Text(
-                    text = address.ifBlank { "Ajoutez une adresse au paiement" },
+                    text = if (isDineIn) {
+                        tableNumber?.let { "Table n° $it" } ?: "Table à indiquer au paiement"
+                    } else {
+                        address.ifBlank { "Ajoutez une adresse au paiement" }
+                    },
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
         }
-        CartIconButton(count = cartCount, onClick = onCartClick)
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
+            CircleIconButton(BoucheeIcons.User, contentDescription = "Mon compte", onClick = onAccountClick)
+            CartIconButton(count = cartCount, onClick = onCartClick)
+        }
     }
+}
+
+/** Compte connecté : nom, e-mail, gestion des commandes (admin) et déconnexion. */
+@Composable
+private fun AccountDialog(
+    user: UserModel?,
+    isAdmin: Boolean,
+    onAdminOrders: () -> Unit,
+    onSignOut: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(BoucheeIcons.User, contentDescription = null, tint = colors.primary) },
+        title = {
+            Text(
+                when {
+                    user?.isAnonymous == true -> "Invité"
+                    else -> user?.name?.takeIf { it.isNotBlank() } ?: "Mon compte"
+                }
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.m)) {
+                Text(
+                    if (user?.isAnonymous == true) "Commande sur place, sans compte" else user?.email.orEmpty(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.onSurfaceVariant
+                )
+                if (isAdmin) {
+                    OutlinedPillButton(text = "Gérer les commandes", onClick = onAdminOrders, modifier = Modifier.fillMaxWidth())
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onSignOut) {
+                Icon(BoucheeIcons.Logout, contentDescription = null, tint = colors.primary, modifier = Modifier.size(18.dp))
+                Text("Se déconnecter", color = colors.primary, modifier = Modifier.padding(start = Spacing.s))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Fermer", color = colors.onSurface) }
+        },
+        containerColor = colors.surfaceContainer
+    )
 }
 
 @Composable

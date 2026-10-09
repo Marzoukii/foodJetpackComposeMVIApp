@@ -8,6 +8,9 @@ object Routes {
     const val ARG_ORDER_NUMBER = "orderNumber"
 
     const val ONBOARDING = "onboarding"
+    const val ORDER_MODE = "order-mode"
+    const val LOGIN = "login"
+    const val REGISTER = "register"
     const val HOME = "home"
     const val MENU = "menu?$ARG_CATEGORY={$ARG_CATEGORY}"
     const val MEAL_DETAILS = "meal/{$ARG_MEAL_ID}"
@@ -15,6 +18,7 @@ object Routes {
     const val CART = "cart"
     const val CHECKOUT = "checkout"
     const val CONFIRMATION = "confirmation/{$ARG_ORDER_NUMBER}"
+    const val ADMIN_ORDERS = "admin/orders"
 
     /** Sans catégorie, le menu ouvre la première catégorie. */
     fun menu(category: String? = null) =

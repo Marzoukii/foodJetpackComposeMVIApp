@@ -17,24 +17,32 @@ class CartRepository @Inject constructor(
     fun getCartItems(): Flow<List<CartItemModel>> =
         cartDao.observeAll().map { cartMapper.mapCartItems(it) }
 
-    suspend fun addToCart(mealId: String, name: String, thumbnail: String?, quantity: Int) {
+    suspend fun addToCart(
+        mealId: String,
+        name: String,
+        thumbnail: String?,
+        quantity: Int,
+        removedIngredients: Set<String> = emptySet()
+    ) {
         cartDao.addOrIncrement(
             CartItemEntity(
+                lineId = CartItemEntity.lineIdFor(mealId, removedIngredients),
                 mealId = mealId,
                 name = name,
                 thumbnail = thumbnail,
                 unitPriceCents = MealPricing.priceCentsFor(mealId),
                 quantity = quantity,
+                removedIngredients = removedIngredients.sorted().joinToString(CartItemEntity.SEPARATOR),
                 addedAt = System.currentTimeMillis()
             )
         )
     }
 
-    suspend fun updateQuantity(mealId: String, quantity: Int) {
+    suspend fun updateQuantity(lineId: String, quantity: Int) {
         if (quantity <= 0) {
-            cartDao.delete(mealId)
+            cartDao.delete(lineId)
         } else {
-            cartDao.updateQuantity(mealId, quantity.coerceAtMost(CartDao.MAX_QUANTITY))
+            cartDao.updateQuantity(lineId, quantity.coerceAtMost(CartDao.MAX_QUANTITY))
         }
     }
 

@@ -12,11 +12,15 @@ class CartMapper @Inject constructor() {
 
     private fun mapCartItem(entity: CartItemEntity): CartItemModel {
         return CartItemModel(
+            lineId = entity.lineId,
             mealId = entity.mealId,
             name = entity.name,
             thumbnail = entity.thumbnail,
             unitPriceCents = entity.unitPriceCents,
-            quantity = entity.quantity
+            quantity = entity.quantity,
+            removedIngredients = entity.removedIngredients
+                .split(CartItemEntity.SEPARATOR)
+                .filter { it.isNotBlank() }
         )
     }
 }

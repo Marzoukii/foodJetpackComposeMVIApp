@@ -8,14 +8,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.foodapp.ui.admin.AdminOrdersRoute
 import com.example.foodapp.ui.cart.CartRoute
 import com.example.foodapp.ui.checkout.CheckoutRoute
 import com.example.foodapp.ui.components.BottomTab
 import com.example.foodapp.ui.confirmation.ConfirmationRoute
 import com.example.foodapp.ui.details.MealDetailsRoute
 import com.example.foodapp.ui.home.HomeRoute
+import com.example.foodapp.ui.login.LoginRoute
 import com.example.foodapp.ui.menu.MenuRoute
 import com.example.foodapp.ui.onboarding.OnboardingRoute
+import com.example.foodapp.ui.ordermode.OrderModeRoute
+import com.example.foodapp.ui.register.RegisterRoute
 import com.example.foodapp.ui.search.SearchRoute
 
 @Composable
@@ -30,9 +34,45 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
     ) {
         composable(Routes.ONBOARDING) {
             OnboardingRoute(
-                onNavigateToHome = {
-                    navController.navigate(Routes.HOME) {
+                onNavigateToOrderMode = {
+                    navController.navigate(Routes.ORDER_MODE) {
                         popUpTo(Routes.ONBOARDING) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.ONBOARDING) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // Démarrage : sur place (sans compte) ou livraison (connexion imposée).
+        composable(Routes.ORDER_MODE) {
+            OrderModeRoute(
+                onNavigateToHome = { navController.navigateClearingBackStack(Routes.HOME) },
+                // L'écran de choix reste dessous : retour = changer de mode.
+                onNavigateToLogin = { navController.navigate(Routes.LOGIN) }
+            )
+        }
+
+        composable(Routes.LOGIN) {
+            LoginRoute(
+                onNavigateToHome = { navController.navigateClearingBackStack(Routes.HOME) },
+                onNavigateToRegister = {
+                    navController.navigate(Routes.REGISTER) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Routes.REGISTER) {
+            RegisterRoute(
+                onNavigateToHome = { navController.navigateClearingBackStack(Routes.HOME) },
+                onNavigateToLogin = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.REGISTER) { inclusive = true }
                     }
                 }
             )
@@ -40,12 +80,24 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
 
         composable(Routes.HOME) {
             HomeRoute(
+                onNavigateToOrderMode = { clearBackStack ->
+                    if (clearBackStack) {
+                        navController.navigateClearingBackStack(Routes.ORDER_MODE)
+                    } else {
+                        navController.navigate(Routes.ORDER_MODE)
+                    }
+                },
                 onNavigateToMenu = { navController.navigate(Routes.menu(it)) },
                 onNavigateToMealDetails = { navController.navigate(Routes.mealDetails(it)) },
                 onNavigateToSearch = { navController.navigate(Routes.SEARCH) },
                 onNavigateToCart = { navController.navigate(Routes.CART) },
+                onNavigateToAdminOrders = { navController.navigate(Routes.ADMIN_ORDERS) },
                 onTabSelected = onTabSelected
             )
+        }
+
+        composable(Routes.ADMIN_ORDERS) {
+            AdminOrdersRoute(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(
@@ -97,6 +149,7 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
                         popUpTo(Routes.HOME)
                     }
                 },
+                onNavigateToLogin = { navController.navigate(Routes.LOGIN) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
@@ -109,6 +162,14 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
                 onNavigateToHome = { navController.popBackStack(Routes.HOME, inclusive = false) }
             )
         }
+    }
+}
+
+/** Connexion / déconnexion : la destination devient la seule de la pile (retour = quitter l'app). */
+private fun NavHostController.navigateClearingBackStack(route: String) {
+    navigate(route) {
+        popUpTo(graph.id) { inclusive = true }
+        launchSingleTop = true
     }
 }
 

@@ -20,7 +20,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val startDestination = if (isOnboardingCompletedUseCase.execute()) Routes.HOME else Routes.ONBOARDING
+        // À chaque lancement, le client choisit : sur place ou livraison.
+        val startDestination = if (isOnboardingCompletedUseCase.execute()) Routes.ORDER_MODE else Routes.ONBOARDING
         setContent {
             FoodAppTheme {
                 AppNavGraph(startDestination = startDestination)

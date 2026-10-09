@@ -111,18 +111,18 @@ fun CartScreen(
                 contentPadding = PaddingValues(start = Spacing.xl, end = Spacing.xl, top = Spacing.s, bottom = Spacing.l),
                 verticalArrangement = Arrangement.spacedBy(Spacing.m)
             ) {
-                items(state.items, key = { it.mealId }) { item ->
+                items(state.items, key = { it.lineId }) { item ->
                     CartItemRow(
                         item = item,
-                        onIncrement = { onIntent(CartIntent.IncrementClicked(item.mealId)) },
-                        onDecrement = { onIntent(CartIntent.DecrementClicked(item.mealId)) }
+                        onIncrement = { onIntent(CartIntent.IncrementClicked(item.lineId)) },
+                        onDecrement = { onIntent(CartIntent.DecrementClicked(item.lineId)) }
                     )
                 }
                 item {
                     PriceSummary(
-                        lines = listOf(
+                        lines = listOfNotNull(
                             PriceLine("Sous-total", formatPrice(state.subtotalCents)),
-                            PriceLine("Livraison", formatPrice(state.deliveryCents))
+                            if (state.isDelivery) PriceLine("Livraison", formatPrice(state.deliveryCents)) else null
                         ),
                         totalLabel = "Total",
                         total = formatPrice(state.totalCents),
@@ -151,6 +151,15 @@ private fun CartItemRow(item: CartItemModel, onIncrement: () -> Unit, onDecremen
             )
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                 Text(item.name, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (item.removedIngredients.isNotEmpty()) {
+                    Text(
+                        item.removedIngredients.joinToString(", ") { "Sans $it" },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
                 Text(formatPrice(item.lineTotalCents), style = PriceTextStyle.copy(fontSize = PriceTextStyle.fontSize * 0.94f))
             }
             QuantityStepper(
@@ -171,9 +180,9 @@ private fun CartPreview() {
             state = CartState(
                 isLoading = false,
                 items = listOf(
-                    CartItemModel("52795", "Chicken Handi", null, 1350, 1),
-                    CartItemModel("52771", "Spicy Arrabiata Penne", null, 1190, 2),
-                    CartItemModel("52776", "Chocolate Gateau", null, 650, 1)
+                    CartItemModel("52795|Onion", "52795", "Chicken Handi", null, 1350, 1, listOf("Onion")),
+                    CartItemModel("52771", "52771", "Spicy Arrabiata Penne", null, 1190, 2),
+                    CartItemModel("52776", "52776", "Chocolate Gateau", null, 650, 1)
                 )
             ),
             onIntent = {}

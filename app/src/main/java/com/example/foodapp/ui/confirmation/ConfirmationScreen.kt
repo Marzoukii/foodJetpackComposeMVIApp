@@ -34,6 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.ui.components.BoucheeIcons
 import com.example.foodapp.ui.components.OutlinedCard
 import com.example.foodapp.ui.components.PrimaryButton
@@ -105,7 +107,11 @@ fun ConfirmationScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
                 Text("Commande confirmée", style = MaterialTheme.typography.headlineMedium.copy(fontSize = MaterialTheme.typography.headlineMedium.fontSize * 1.07f), textAlign = TextAlign.Center)
                 Text(
-                    "Merci ! Le restaurant prépare votre commande n° ${state.orderNumber}.",
+                    if (state.orderType == OrderType.DINE_IN && state.tableNumber != null) {
+                        "Merci ! Votre commande n° ${state.orderNumber} sera servie à la table ${state.tableNumber}."
+                    } else {
+                        "Merci ! Le restaurant prépare votre commande n° ${state.orderNumber}."
+                    },
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = MaterialTheme.typography.bodyLarge.fontSize * 0.94f),
                     color = colors.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -173,5 +179,10 @@ private fun TimelineStep(step: OrderStep, isLast: Boolean) {
 @Preview(showBackground = true, widthDp = 390, heightDp = 844)
 @Composable
 private fun ConfirmationPreview() {
-    FoodAppTheme { ConfirmationScreen(state = ConfirmationState(orderNumber = "482913"), onIntent = {}) }
+    FoodAppTheme {
+        ConfirmationScreen(
+            state = ConfirmationState(orderNumber = "482913", orderStatus = OrderStatus.PREPARING),
+            onIntent = {}
+        )
+    }
 }

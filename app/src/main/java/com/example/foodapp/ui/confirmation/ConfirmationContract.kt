@@ -1,18 +1,31 @@
 package com.example.foodapp.ui.confirmation
 
+import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.ui.util.label
+import com.example.foodapp.ui.util.subtitle
+
 enum class StepStatus { Done, Current, Upcoming }
 
 data class OrderStep(val label: String, val subtitle: String, val status: StepStatus)
 
 data class ConfirmationState(
     val orderNumber: String = "",
-    val steps: List<OrderStep> = listOf(
-        OrderStep("Commande reçue", "Le restaurant a bien reçu votre commande", StepStatus.Done),
-        OrderStep("En préparation", "Vos plats sont en cuisine", StepStatus.Current),
-        OrderStep("En route", "Un livreur récupère la commande", StepStatus.Upcoming),
-        OrderStep("Livrée", "Bon appétit !", StepStatus.Upcoming)
-    )
-)
+    val orderStatus: OrderStatus = OrderStatus.RECEIVED,
+    val orderType: OrderType = OrderType.DELIVERY,
+    val tableNumber: Int? = null
+) {
+    /** Les étapes avant le statut actuel sont faites ; une commande livrée est entièrement cochée. */
+    val steps: List<OrderStep>
+        get() = orderType.statuses.map { status ->
+            val stepStatus = when {
+                status < orderStatus || orderStatus == OrderStatus.DELIVERED -> StepStatus.Done
+                status == orderStatus -> StepStatus.Current
+                else -> StepStatus.Upcoming
+            }
+            OrderStep(status.label(orderType), status.subtitle, stepStatus)
+        }
+}
 
 sealed interface ConfirmationIntent {
     data object BackToHomeClicked : ConfirmationIntent
