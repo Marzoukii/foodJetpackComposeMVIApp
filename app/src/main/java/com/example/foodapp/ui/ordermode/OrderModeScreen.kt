@@ -32,12 +32,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.ui.components.BoucheeIcons
 import com.example.foodapp.ui.components.OutlinedCard
 import com.example.foodapp.ui.theme.FoodAppTheme
@@ -53,6 +56,7 @@ fun OrderModeRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -61,7 +65,7 @@ fun OrderModeRoute(
                 OrderModeEffect.NavigateToLogin -> onNavigateToLogin()
                 is OrderModeEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
                 }
             }
         }
@@ -87,11 +91,11 @@ fun OrderModeScreen(
                 .padding(horizontal = Spacing.xxl, vertical = Spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
-            Text("Bouchée", style = MaterialTheme.typography.titleLarge, color = colors.primary)
+            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge, color = colors.primary)
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
-                Text("Comment souhaitez-vous commander ?", style = MaterialTheme.typography.displayMedium)
+                Text(stringResource(R.string.order_mode_title), style = MaterialTheme.typography.displayMedium)
                 Text(
-                    "Au restaurant, indiquez simplement votre table. Pour la livraison, un compte est nécessaire.",
+                    stringResource(R.string.order_mode_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant
                 )
@@ -99,15 +103,15 @@ fun OrderModeScreen(
 
             ModeCard(
                 icon = BoucheeIcons.Table,
-                title = "Sur place",
-                subtitle = "Je suis au restaurant, je donne mon numéro de table",
+                title = stringResource(R.string.order_type_dine_in),
+                subtitle = stringResource(R.string.order_mode_dine_in_subtitle),
                 enabled = !state.isLoading,
                 onClick = { onIntent(OrderModeIntent.DineInClicked) }
             )
             ModeCard(
                 icon = BoucheeIcons.Pin,
-                title = "Livraison",
-                subtitle = "Je me fais livrer (connexion requise)",
+                title = stringResource(R.string.order_type_delivery),
+                subtitle = stringResource(R.string.order_mode_delivery_subtitle),
                 enabled = !state.isLoading,
                 onClick = { onIntent(OrderModeIntent.DeliveryClicked) }
             )
@@ -117,7 +121,7 @@ fun OrderModeScreen(
     if (state.isTableDialogVisible) {
         TableNumberDialog(
             value = state.tableNumberDraft,
-            error = state.tableNumberError,
+            error = state.tableNumberError?.asString(),
             onValueChange = { onIntent(OrderModeIntent.TableNumberChanged(it)) },
             onConfirm = { onIntent(OrderModeIntent.ConfirmTable) },
             onDismiss = { onIntent(OrderModeIntent.DismissTable) }
@@ -165,12 +169,12 @@ private fun TableNumberDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Numéro de table", style = MaterialTheme.typography.titleLarge) },
+        title = { Text(stringResource(R.string.common_table_number), style = MaterialTheme.typography.titleLarge) },
         text = {
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text("Ex. 12") },
+                placeholder = { Text(stringResource(R.string.common_table_placeholder)) },
                 isError = error != null,
                 supportingText = error?.let { { Text(it) } },
                 singleLine = true,
@@ -181,10 +185,10 @@ private fun TableNumberDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = onConfirm, enabled = value.isNotBlank()) { Text("Continuer") }
+            TextButton(onClick = onConfirm, enabled = value.isNotBlank()) { Text(stringResource(R.string.common_continue)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Annuler") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainer
     )

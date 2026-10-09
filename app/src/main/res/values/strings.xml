@@ -1,3 +1,253 @@
 <resources>
-    <string name="app_name">foodApp</string>
+    <string name="app_name">8100</string>
+
+    <!-- Commun -->
+    <string name="common_back">Retour</string>
+    <string name="common_retry">Réessayer</string>
+    <string name="common_cancel">Annuler</string>
+    <string name="common_continue">Continuer</string>
+    <string name="common_save">Enregistrer</string>
+    <string name="common_close">Fermer</string>
+    <string name="common_add">Ajouter</string>
+    <string name="common_remove">Retirer</string>
+    <string name="common_total">Total</string>
+    <string name="common_subtotal">Sous-total</string>
+    <string name="common_delivery">Livraison</string>
+    <string name="common_sign_in">Se connecter</string>
+    <string name="common_sign_out">Se déconnecter</string>
+    <string name="common_email">E-mail</string>
+    <string name="common_password">Mot de passe</string>
+    <string name="common_email_placeholder">vous@exemple.fr</string>
+    <string name="common_or">ou</string>
+    <string name="common_table_placeholder">Ex. 12</string>
+    <string name="common_table_number">Numéro de table</string>
+    <string name="common_table_label">Table n° %1$d</string>
+    <string name="common_order_number">Commande n° %1$s</string>
+    <string name="common_without_ingredient">Sans %1$s</string>
+    <string name="common_list_separator">" · "</string>
+    <string name="common_ingredients_separator">", "</string>
+    <string name="common_unknown_error">Erreur inconnue</string>
+    <string name="common_generic_error">Une erreur est survenue</string>
+    <string name="common_added_to_cart">%1$s ajouté au panier</string>
+    <string name="common_search_meal">Rechercher un plat</string>
+    <plurals name="common_articles">
+        <item quantity="one">%1$d article</item>
+        <item quantity="other">%1$d articles</item>
+    </plurals>
+
+    <!-- Composants -->
+    <string name="component_add_to_cart">Ajouter au panier</string>
+    <string name="component_cart_with_count">Panier, %1$s</string>
+    <string name="component_show_password">Afficher le mot de passe</string>
+    <string name="component_hide_password">Masquer le mot de passe</string>
+    <string name="component_continue_with_google">Continuer avec Google</string>
+    <string name="tab_home">Accueil</string>
+    <string name="tab_menu">Menu</string>
+    <string name="tab_cart">Panier</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Les plats du monde, livrés chez vous.</string>
+    <string name="onboarding_subtitle">Parcourez les recettes par catégorie, composez votre panier et commandez en quelques touches.</string>
+    <string name="onboarding_start">Commencer</string>
+    <string name="onboarding_have_account">J\'ai déjà un compte</string>
+
+    <!-- Mode de commande -->
+    <string name="order_mode_title">Comment souhaitez-vous commander ?</string>
+    <string name="order_mode_subtitle">Au restaurant, indiquez simplement votre table. Pour la livraison, un compte est nécessaire.</string>
+    <string name="order_mode_dine_in_subtitle">Je suis au restaurant, je donne mon numéro de table</string>
+    <string name="order_mode_delivery_subtitle">Je me fais livrer (connexion requise)</string>
+    <string name="order_mode_table_required">Saisissez votre numéro de table</string>
+
+    <!-- Connexion / inscription -->
+    <string name="login_title">Content de vous revoir</string>
+    <string name="login_subtitle">Connectez-vous pour retrouver votre panier et vos commandes.</string>
+    <string name="login_password_placeholder">Votre mot de passe</string>
+    <string name="login_forgot_password">Mot de passe oublié ?</string>
+    <string name="login_loading">Connexion…</string>
+    <string name="login_no_account">Pas encore de compte ?</string>
+    <string name="login_create_account">Créer un compte</string>
+    <string name="login_email_required">Saisissez votre e-mail</string>
+    <string name="login_email_invalid">E-mail invalide</string>
+    <string name="login_password_required">Saisissez votre mot de passe</string>
+    <string name="login_email_required_for_reset">Saisissez votre e-mail pour recevoir le lien</string>
+    <string name="login_reset_sent">Si un compte existe, un e-mail de réinitialisation a été envoyé à %1$s</string>
+
+    <string name="register_title">Créer un compte</string>
+    <string name="register_subtitle">Quelques infos et vous pourrez commander vos plats préférés.</string>
+    <string name="register_name">Nom</string>
+    <string name="register_name_placeholder">Marie Dupont</string>
+    <string name="register_password_min">%1$d caractères minimum</string>
+    <string name="register_confirm_password">Confirmer le mot de passe</string>
+    <string name="register_confirm_password_placeholder">Retapez le mot de passe</string>
+    <string name="register_loading">Création…</string>
+    <string name="register_submit">Créer mon compte</string>
+    <string name="register_have_account">Déjà un compte ?</string>
+    <string name="register_name_required">Saisissez votre nom</string>
+    <string name="register_passwords_mismatch">Les mots de passe ne correspondent pas</string>
+
+    <string name="auth_error_weak_password">Mot de passe trop faible (%1$d caractères minimum)</string>
+    <string name="auth_error_email_in_use">Un compte existe déjà avec cet e-mail</string>
+    <string name="auth_error_no_account">Aucun compte actif ne correspond à cet e-mail</string>
+    <string name="auth_error_invalid_credentials">E-mail ou mot de passe incorrect</string>
+    <string name="auth_error_too_many_requests">Trop de tentatives, réessayez dans quelques minutes</string>
+    <string name="auth_error_no_network">Pas de connexion internet</string>
+    <string name="auth_error_provider_disabled">Ce mode de connexion n\'est pas activé. Contactez le restaurant.</string>
+    <string name="google_error_not_configured">Connexion Google non configurée (activez-la dans Firebase puis retéléchargez google-services.json)</string>
+    <string name="google_error_unknown_credential">Identifiant Google non reconnu</string>
+    <string name="google_error_no_account">Aucun compte Google sur cet appareil</string>
+    <string name="google_error_generic">Connexion Google impossible</string>
+
+    <!-- Accueil -->
+    <string name="home_title">On mange quoi aujourd\'hui ?</string>
+    <string name="home_popular">Populaires</string>
+    <string name="home_categories">Catégories</string>
+    <string name="home_see_all">Tout voir</string>
+    <string name="home_meal_of_the_day">Plat du jour</string>
+    <string name="home_dine_in_change">Sur place · changer</string>
+    <string name="home_delivery_change">Livrer à · changer</string>
+    <string name="home_table_at_checkout">Table à indiquer au paiement</string>
+    <string name="home_address_at_checkout">Ajoutez une adresse au paiement</string>
+    <string name="home_my_account">Mon compte</string>
+    <string name="home_guest">Invité</string>
+    <string name="home_guest_subtitle">Commande sur place, sans compte</string>
+    <string name="home_manage_orders">Gérer les commandes</string>
+
+    <!-- Menu / recherche -->
+    <string name="menu_title">Menu</string>
+    <string name="menu_empty">Aucun plat dans cette catégorie</string>
+    <string name="menu_see_cart">Voir le panier</string>
+    <string name="search_title">Rechercher</string>
+    <string name="search_hint">Tapez le nom d\'un plat pour lancer la recherche</string>
+    <string name="search_no_results">Aucun résultat pour « %1$s »</string>
+
+    <!-- Fiche plat -->
+    <string name="details_add_with_price">Ajouter · %1$s</string>
+    <string name="details_ingredients">Ingrédients</string>
+    <string name="details_ingredients_hint">Touchez un ingrédient pour le retirer</string>
+    <string name="details_ingredient_with_measure">%1$s · %2$s</string>
+    <string name="details_hide_recipe">Masquer la recette</string>
+    <string name="details_show_recipe">Voir la recette complète</string>
+    <string name="details_not_found">Plat introuvable</string>
+
+    <!-- Panier -->
+    <string name="cart_title">Mon panier</string>
+    <string name="cart_clear">Vider</string>
+    <string name="cart_checkout_with_price">Passer la commande · %1$s</string>
+    <string name="cart_empty">Votre panier est vide</string>
+    <string name="cart_browse_menu">Voir le menu</string>
+
+    <!-- Paiement -->
+    <string name="checkout_title">Paiement</string>
+    <string name="checkout_pay_with_price">Payer %1$s</string>
+    <string name="checkout_delivery_address">Adresse de livraison</string>
+    <string name="checkout_delivery_asap_hint">Livraison dès que la commande est prête</string>
+    <string name="checkout_delivery_scheduled_hint">Le restaurant vous contactera pour fixer le créneau</string>
+    <string name="checkout_your_table">Votre table</string>
+    <string name="checkout_table_hint">Le numéro est indiqué sur votre table</string>
+    <string name="checkout_payment_method">Moyen de paiement</string>
+    <string name="checkout_home">Domicile</string>
+    <string name="checkout_no_address">Aucune adresse renseignée</string>
+    <string name="checkout_edit">Modifier</string>
+    <string name="checkout_account_required">Compte requis</string>
+    <string name="checkout_sign_in_to_deliver">Connectez-vous pour être livré</string>
+    <string name="checkout_address_placeholder">N°, rue, ville</string>
+    <string name="checkout_delivery_asap">Dès que possible</string>
+    <string name="checkout_delivery_scheduled">Planifier</string>
+    <string name="checkout_payment_card">Carte bancaire</string>
+    <string name="checkout_payment_cash">Espèces</string>
+    <string name="checkout_card_at_table">Par carte, à table</string>
+    <string name="checkout_card_on_delivery">Par carte, à la livraison</string>
+    <string name="checkout_cash_at_table">À table</string>
+    <string name="checkout_cash_on_delivery">À la livraison</string>
+    <string name="checkout_address_required">Ajoutez une adresse de livraison</string>
+    <string name="checkout_order_failed">Impossible d\'envoyer la commande, vérifiez votre connexion</string>
+
+    <!-- Confirmation et statuts -->
+    <string name="confirmation_title">Commande confirmée</string>
+    <string name="confirmation_dine_in_message">Merci ! Votre commande n° %1$s sera servie à la table %2$d.</string>
+    <string name="confirmation_delivery_message">Merci ! Le restaurant prépare votre commande n° %1$s.</string>
+    <string name="confirmation_back_home">Retour à l\'accueil</string>
+    <string name="status_received">Commande reçue</string>
+    <string name="status_preparing">En préparation</string>
+    <string name="status_on_the_way">En route</string>
+    <string name="status_served">Servie</string>
+    <string name="status_delivered">Livrée</string>
+    <string name="status_received_subtitle">Le restaurant a bien reçu votre commande</string>
+    <string name="status_preparing_subtitle">Vos plats sont en cuisine</string>
+    <string name="status_on_the_way_subtitle">Un livreur récupère la commande</string>
+    <string name="status_delivered_subtitle">Bon appétit !</string>
+    <string name="order_type_delivery">Livraison</string>
+    <string name="order_type_dine_in">Sur place</string>
+
+    <!-- Admin -->
+    <string name="admin_orders_title">Commandes</string>
+    <string name="admin_team">Équipe</string>
+    <string name="admin_orders_empty">Aucune commande pour le moment</string>
+    <string name="admin_quantity_item">%1$d × %2$s</string>
+    <string name="admin_access_denied">Accès refusé : ce compte n\'est pas administrateur</string>
+    <string name="admin_status_changed">Commande n° %1$s : %2$s</string>
+    <string name="admin_status_change_failed">Impossible de changer le statut</string>
+    <string name="admin_team_search">Rechercher un e-mail</string>
+    <string name="admin_team_empty">Aucun compte trouvé</string>
+    <string name="admin_team_you">%1$s · vous</string>
+    <string name="admin_role_admin">Admin</string>
+    <string name="admin_role_client">Client</string>
+    <string name="admin_now_admin">%1$s est maintenant admin</string>
+    <string name="admin_no_longer_admin">%1$s n\'est plus admin</string>
+    <string name="admin_role_change_failed">Impossible de modifier le rôle</string>
+
+    <!-- Catégories TheMealDB -->
+    <string name="category_beef">Bœuf</string>
+    <string name="category_breakfast">Petit-déjeuner</string>
+    <string name="category_chicken">Poulet</string>
+    <string name="category_dessert">Dessert</string>
+    <string name="category_goat">Chèvre</string>
+    <string name="category_lamb">Agneau</string>
+    <string name="category_miscellaneous">Divers</string>
+    <string name="category_pasta">Pâtes</string>
+    <string name="category_pork">Porc</string>
+    <string name="category_seafood">Fruits de mer</string>
+    <string name="category_side">Accompagnement</string>
+    <string name="category_starter">Entrée</string>
+    <string name="category_vegan">Vegan</string>
+    <string name="category_vegetarian">Végétarien</string>
+
+    <!-- Origines TheMealDB -->
+    <string name="area_algerian">Algérien</string>
+    <string name="area_american">Américain</string>
+    <string name="area_argentinian">Argentin</string>
+    <string name="area_australian">Australien</string>
+    <string name="area_british">Britannique</string>
+    <string name="area_canadian">Canadien</string>
+    <string name="area_chinese">Chinois</string>
+    <string name="area_croatian">Croate</string>
+    <string name="area_dutch">Néerlandais</string>
+    <string name="area_egyptian">Égyptien</string>
+    <string name="area_filipino">Philippin</string>
+    <string name="area_french">Français</string>
+    <string name="area_greek">Grec</string>
+    <string name="area_indian">Indien</string>
+    <string name="area_irish">Irlandais</string>
+    <string name="area_italian">Italien</string>
+    <string name="area_jamaican">Jamaïcain</string>
+    <string name="area_japanese">Japonais</string>
+    <string name="area_kenyan">Kényan</string>
+    <string name="area_malaysian">Malaisien</string>
+    <string name="area_mexican">Mexicain</string>
+    <string name="area_moroccan">Marocain</string>
+    <string name="area_norwegian">Norvégien</string>
+    <string name="area_polish">Polonais</string>
+    <string name="area_portuguese">Portugais</string>
+    <string name="area_russian">Russe</string>
+    <string name="area_saudi_arabian">Saoudien</string>
+    <string name="area_slovakian">Slovaque</string>
+    <string name="area_spanish">Espagnol</string>
+    <string name="area_syrian">Syrien</string>
+    <string name="area_thai">Thaïlandais</string>
+    <string name="area_tunisian">Tunisien</string>
+    <string name="area_turkish">Turc</string>
+    <string name="area_ukrainian">Ukrainien</string>
+    <string name="area_uruguayan">Uruguayen</string>
+    <string name="area_venezuelan">Vénézuélien</string>
+    <string name="area_vietnamese">Vietnamien</string>
 </resources>

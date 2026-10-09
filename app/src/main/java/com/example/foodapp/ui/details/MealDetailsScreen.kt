@@ -1,12 +1,12 @@
 package com.example.foodapp.ui.details
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,12 +29,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.MealModel
 import com.example.foodapp.ui.components.BoucheeIcons
 import com.example.foodapp.ui.components.CircleIconButton
@@ -85,7 +87,7 @@ fun MealDetailsScreen(
                         onIncrement = { onIntent(MealDetailsIntent.IncrementQuantity) }
                     )
                     PrimaryButton(
-                        text = "Ajouter · ${formatPrice(state.totalCents)}",
+                        text = stringResource(R.string.details_add_with_price, formatPrice(state.totalCents)),
                         onClick = { onIntent(MealDetailsIntent.AddToCartClicked) },
                         modifier = Modifier.weight(1f)
                     )
@@ -97,9 +99,9 @@ fun MealDetailsScreen(
             state.isLoading -> LoadingView(Modifier.padding(padding))
             state.error != null -> Column(Modifier.padding(padding).statusBarsPadding()) {
                 Box(Modifier.padding(Spacing.xl)) {
-                    CircleIconButton(BoucheeIcons.Back, "Retour", onClick = { onIntent(MealDetailsIntent.BackClicked) })
+                    CircleIconButton(BoucheeIcons.Back, stringResource(R.string.common_back), onClick = { onIntent(MealDetailsIntent.BackClicked) })
                 }
-                ErrorView(message = state.error, onRetry = { onIntent(MealDetailsIntent.LoadMeal) })
+                ErrorView(message = state.error.asString(), onRetry = { onIntent(MealDetailsIntent.LoadMeal) })
             }
             state.meal != null -> MealDetailsContent(
                 state = state,
@@ -135,7 +137,7 @@ private fun MealDetailsContent(
             MealImage(url = meal.thumbnail, contentDescription = meal.name, modifier = Modifier.fillMaxSize())
             CircleIconButton(
                 icon = BoucheeIcons.Back,
-                contentDescription = "Retour",
+                contentDescription = stringResource(R.string.common_back),
                 onClick = { onIntent(MealDetailsIntent.BackClicked) },
                 bordered = false,
                 modifier = Modifier
@@ -185,9 +187,9 @@ private fun MealDetailsContent(
             val ingredients = meal.ingredients()
             if (ingredients.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text("Ingrédients", style = MaterialTheme.typography.titleMedium.copy(fontSize = MaterialTheme.typography.bodyLarge.fontSize))
+                    Text(stringResource(R.string.details_ingredients), style = MaterialTheme.typography.titleMedium.copy(fontSize = MaterialTheme.typography.bodyLarge.fontSize))
                     Text(
-                        "Touchez un ingrédient pour le retirer",
+                        stringResource(R.string.details_ingredients_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = colors.onSurfaceVariant
                     )
@@ -205,9 +207,9 @@ private fun MealDetailsContent(
                             ) {
                                 Text(
                                     text = when {
-                                        removed -> "Sans $ingredient"
+                                        removed -> stringResource(R.string.common_without_ingredient, ingredient)
                                         measure.isBlank() -> ingredient
-                                        else -> "$ingredient · $measure"
+                                        else -> stringResource(R.string.details_ingredient_with_measure, ingredient, measure)
                                     },
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         textDecoration = if (removed) TextDecoration.LineThrough else null
@@ -227,7 +229,7 @@ private fun MealDetailsContent(
                     modifier = Modifier.offset(x = (-12).dp)
                 ) {
                     Text(
-                        if (state.showFullRecipe) "Masquer la recette" else "Voir la recette complète",
+                        stringResource(if (state.showFullRecipe) R.string.details_hide_recipe else R.string.details_show_recipe),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
                     )
                 }

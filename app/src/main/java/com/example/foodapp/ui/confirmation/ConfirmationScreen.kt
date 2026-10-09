@@ -28,12 +28,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.OrderStatus
 import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.ui.components.BoucheeIcons
@@ -105,12 +107,12 @@ fun ConfirmationScreen(
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
-                Text("Commande confirmée", style = MaterialTheme.typography.headlineMedium.copy(fontSize = MaterialTheme.typography.headlineMedium.fontSize * 1.07f), textAlign = TextAlign.Center)
+                Text(stringResource(R.string.confirmation_title), style = MaterialTheme.typography.headlineMedium.copy(fontSize = MaterialTheme.typography.headlineMedium.fontSize * 1.07f), textAlign = TextAlign.Center)
                 Text(
                     if (state.orderType == OrderType.DINE_IN && state.tableNumber != null) {
-                        "Merci ! Votre commande n° ${state.orderNumber} sera servie à la table ${state.tableNumber}."
+                        stringResource(R.string.confirmation_dine_in_message, state.orderNumber, state.tableNumber)
                     } else {
-                        "Merci ! Le restaurant prépare votre commande n° ${state.orderNumber}."
+                        stringResource(R.string.confirmation_delivery_message, state.orderNumber)
                     },
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = MaterialTheme.typography.bodyLarge.fontSize * 0.94f),
                     color = colors.onSurfaceVariant,
@@ -130,7 +132,7 @@ fun ConfirmationScreen(
 
         Column(modifier = Modifier.padding(start = Spacing.xl, end = Spacing.xl, top = Spacing.l, bottom = Spacing.xxl)) {
             PrimaryButton(
-                text = "Retour à l'accueil",
+                text = stringResource(R.string.confirmation_back_home),
                 onClick = { onIntent(ConfirmationIntent.BackToHomeClicked) },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -165,13 +167,13 @@ private fun TimelineStep(step: OrderStep, isLast: Boolean) {
         }
         Column(modifier = Modifier.padding(top = 2.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                step.label,
+                stringResource(step.labelRes),
                 style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = if (step.status == StepStatus.Upcoming) FontWeight.Medium else FontWeight.Bold
                 ),
                 color = if (step.status == StepStatus.Upcoming) colors.onSurfaceVariant else colors.onSurface
             )
-            Text(step.subtitle, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+            Text(stringResource(step.subtitleRes), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
         }
     }
 }

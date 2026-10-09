@@ -1,9 +1,11 @@
 package com.example.foodapp.ui.ordermode
 
+import com.example.foodapp.ui.util.UiText
+
 data class OrderModeState(
     val isTableDialogVisible: Boolean = false,
     val tableNumberDraft: String = "",
-    val tableNumberError: String? = null,
+    val tableNumberError: UiText? = null,
     /** Ouverture de la session invitée en cours. */
     val isLoading: Boolean = false
 )
@@ -20,5 +22,5 @@ sealed interface OrderModeEffect {
     data object NavigateToHome : OrderModeEffect
     /** Livraison sans compte : l'authentification est obligatoire. */
     data object NavigateToLogin : OrderModeEffect
-    data class ShowMessage(val message: String) : OrderModeEffect
+    data class ShowMessage(val message: UiText) : OrderModeEffect
 }

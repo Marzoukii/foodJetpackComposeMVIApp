@@ -1,15 +1,17 @@
 package com.example.foodapp.ui.register
 
+import com.example.foodapp.ui.util.UiText
+
 data class RegisterState(
     val name: String = "",
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
     val isPasswordVisible: Boolean = false,
-    val nameError: String? = null,
-    val emailError: String? = null,
-    val passwordError: String? = null,
-    val confirmPasswordError: String? = null,
+    val nameError: UiText? = null,
+    val emailError: UiText? = null,
+    val passwordError: UiText? = null,
+    val confirmPasswordError: UiText? = null,
     val isLoading: Boolean = false
 )
 
@@ -30,5 +32,5 @@ sealed interface RegisterEffect {
     data object NavigateToHome : RegisterEffect
     data object NavigateToLogin : RegisterEffect
     data object LaunchGoogleSignIn : RegisterEffect
-    data class ShowMessage(val message: String) : RegisterEffect
+    data class ShowMessage(val message: UiText) : RegisterEffect
 }

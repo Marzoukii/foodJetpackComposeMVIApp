@@ -28,11 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.ui.components.MealImage
 import com.example.foodapp.ui.components.PrimaryButton
 import com.example.foodapp.ui.theme.FoodAppTheme
@@ -100,10 +102,10 @@ fun OnboardingScreen(
                     )
                 }
             }
-            FloatingChip("Poulet", colors.surfaceContainer, colors.onSurface, Alignment.TopStart, x = 24.dp, y = 56.dp)
-            FloatingChip("Pâtes", colors.onSurface, colors.surfaceContainer, Alignment.TopEnd, x = (-22).dp, y = 110.dp)
-            FloatingChip("Dessert", colors.secondaryContainer, colors.onSurface, Alignment.BottomStart, x = 44.dp, y = (-64).dp)
-            FloatingChip("Fruits de mer", colors.surfaceContainer, colors.onSurface, Alignment.BottomEnd, x = (-36).dp, y = (-92).dp)
+            FloatingChip(stringResource(R.string.category_chicken), colors.surfaceContainer, colors.onSurface, Alignment.TopStart, x = 24.dp, y = 56.dp)
+            FloatingChip(stringResource(R.string.category_pasta), colors.onSurface, colors.surfaceContainer, Alignment.TopEnd, x = (-22).dp, y = 110.dp)
+            FloatingChip(stringResource(R.string.category_dessert), colors.secondaryContainer, colors.onSurface, Alignment.BottomStart, x = 44.dp, y = (-64).dp)
+            FloatingChip(stringResource(R.string.category_seafood), colors.surfaceContainer, colors.onSurface, Alignment.BottomEnd, x = (-36).dp, y = (-92).dp)
         }
 
         // Feuille blanche du bas
@@ -122,18 +124,18 @@ fun OnboardingScreen(
                 PageDot(width = 6.dp, color = colors.outlineVariant)
             }
             Text(
-                text = "Les plats du monde, livrés chez vous.",
+                text = stringResource(R.string.onboarding_title),
                 style = MaterialTheme.typography.displayMedium
             )
             Text(
-                text = "Parcourez les recettes par catégorie, composez votre panier et commandez en quelques touches.",
+                text = stringResource(R.string.onboarding_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = colors.onSurfaceVariant
             )
             Column {
                 Spacer(Modifier.height(Spacing.xs))
                 PrimaryButton(
-                    text = "Commencer",
+                    text = stringResource(R.string.onboarding_start),
                     onClick = { onIntent(OnboardingIntent.StartClicked) },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -144,7 +146,7 @@ fun OnboardingScreen(
                         .height(48.dp)
                 ) {
                     Text(
-                        "J'ai déjà un compte",
+                        stringResource(R.string.onboarding_have_account),
                         style = MaterialTheme.typography.labelLarge,
                         color = colors.onSurface
                     )

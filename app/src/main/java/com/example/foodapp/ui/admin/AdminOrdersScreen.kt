@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,10 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.OrderItemModel
 import com.example.foodapp.domain.model.OrderModel
 import com.example.foodapp.domain.model.OrderStatus
@@ -41,7 +46,9 @@ import com.example.foodapp.ui.components.OutlinedCard
 import com.example.foodapp.ui.theme.FoodAppTheme
 import com.example.foodapp.ui.theme.Spacing
 import com.example.foodapp.ui.util.formatPrice
-import com.example.foodapp.ui.util.label
+import com.example.foodapp.ui.util.joinDetails
+import com.example.foodapp.ui.util.labelRes
+import com.example.foodapp.ui.util.withoutIngredients
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -49,20 +56,23 @@ import java.util.Locale
 
 @Composable
 fun AdminOrdersRoute(
+    onNavigateToTeam: () -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: AdminOrdersViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
+                AdminOrdersEffect.NavigateToTeam -> onNavigateToTeam()
                 AdminOrdersEffect.NavigateBack -> onNavigateBack()
                 is AdminOrdersEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
                 }
             }
         }
@@ -80,8 +90,13 @@ fun AdminOrdersScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                title = "Gestion des commandes",
+                title = stringResource(R.string.admin_orders_title),
                 onBack = { onIntent(AdminOrdersIntent.BackClicked) },
+                action = {
+                    TextButton(onClick = { onIntent(AdminOrdersIntent.TeamClicked) }) {
+                        Text(stringResource(R.string.admin_team), style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
+                    }
+                },
                 modifier = Modifier.statusBarsPadding()
             )
         },
@@ -90,11 +105,11 @@ fun AdminOrdersScreen(
         when {
             state.isLoading -> LoadingView(Modifier.padding(padding))
             state.error != null -> ErrorView(
-                message = state.error,
+                message = state.error.asString(),
                 onRetry = { onIntent(AdminOrdersIntent.Retry) },
                 modifier = Modifier.padding(padding)
             )
-            state.orders.isEmpty() -> EmptyView(message = "Aucune commande pour le moment", modifier = Modifier.padding(padding))
+            state.orders.isEmpty() -> EmptyView(message = stringResource(R.string.admin_orders_empty), modifier = Modifier.padding(padding))
             else -> LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -121,34 +136,34 @@ private fun AdminOrderCard(order: OrderModel, onStatusSelected: (OrderStatus) ->
         Column(modifier = Modifier.padding(Spacing.l), verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "Commande n° ${order.orderNumber}",
+                    stringResource(R.string.common_order_number, order.orderNumber),
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                     modifier = Modifier.weight(1f)
                 )
                 Text(formatOrderDate(order.createdAt), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
             }
             val destination = if (order.orderType == OrderType.DINE_IN) {
-                order.tableNumber?.let { "Table n° $it" }
+                order.tableNumber?.let { stringResource(R.string.common_table_label, it) }
             } else {
                 order.address.takeIf { it.isNotBlank() }
             }
             Text(
-                listOfNotNull(order.orderType.label, destination).joinToString(" · "),
+                joinDetails(stringResource(order.orderType.labelRes), destination),
                 style = MaterialTheme.typography.bodySmall,
                 color = colors.onSurfaceVariant
             )
             Text(
-                "${order.itemCount} article${if (order.itemCount > 1) "s" else ""} · ${formatPrice(order.totalCents)}",
+                joinDetails(pluralStringResource(R.plurals.common_articles, order.itemCount, order.itemCount), formatPrice(order.totalCents)),
                 style = MaterialTheme.typography.bodyMedium
             )
             if (order.items.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
                     order.items.forEach { item ->
                         Column {
-                            Text("${item.quantity} × ${item.name}", style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.admin_quantity_item, item.quantity, item.name), style = MaterialTheme.typography.bodySmall)
                             if (item.removedIngredients.isNotEmpty()) {
                                 Text(
-                                    item.removedIngredients.joinToString(", ") { "Sans $it" },
+                                    withoutIngredients(item.removedIngredients),
                                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
                                     color = colors.error,
                                     modifier = Modifier.padding(start = Spacing.m)
@@ -166,7 +181,7 @@ private fun AdminOrderCard(order: OrderModel, onStatusSelected: (OrderStatus) ->
             ) {
                 order.orderType.statuses.forEach { status ->
                     CategoryChip(
-                        label = status.label(order.orderType),
+                        label = stringResource(status.labelRes(order.orderType)),
                         selected = status == order.status,
                         onClick = { onStatusSelected(status) }
                     )

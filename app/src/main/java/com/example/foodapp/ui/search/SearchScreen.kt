@@ -19,8 +19,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.components.BackTopBar
 import com.example.foodapp.ui.components.EmptyView
@@ -32,6 +35,7 @@ import com.example.foodapp.ui.theme.Spacing
 import com.example.foodapp.ui.util.areaLabel
 import com.example.foodapp.ui.util.categoryLabel
 import com.example.foodapp.ui.util.formatPrice
+import com.example.foodapp.ui.util.joinDetails
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,6 +47,7 @@ fun SearchRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -51,7 +56,7 @@ fun SearchRoute(
                 SearchEffect.NavigateBack -> onNavigateBack()
                 is SearchEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
                 }
             }
         }
@@ -72,7 +77,7 @@ fun SearchScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                title = "Rechercher",
+                title = stringResource(R.string.search_title),
                 onBack = { onIntent(SearchIntent.BackClicked) },
                 modifier = Modifier.statusBarsPadding()
             )
@@ -91,9 +96,9 @@ fun SearchScreen(
 
             when {
                 state.isLoading -> LoadingView()
-                state.error != null -> ErrorView(message = state.error, onRetry = { onIntent(SearchIntent.Retry) })
-                !state.hasSearched -> EmptyView("Tapez le nom d'un plat pour lancer la recherche")
-                state.results.isEmpty() -> EmptyView("Aucun résultat pour « ${state.query} »")
+                state.error != null -> ErrorView(message = state.error.asString(), onRetry = { onIntent(SearchIntent.Retry) })
+                !state.hasSearched -> EmptyView(stringResource(R.string.search_hint))
+                state.results.isEmpty() -> EmptyView(stringResource(R.string.search_no_results, state.query))
                 else -> LazyColumn(
                     contentPadding = PaddingValues(start = Spacing.xl, end = Spacing.xl, bottom = Spacing.l),
                     verticalArrangement = Arrangement.spacedBy(Spacing.m),
@@ -102,10 +107,7 @@ fun SearchScreen(
                     items(state.results, key = { it.id ?: it.hashCode() }) { meal ->
                         MealRowCard(
                             name = meal.name.orEmpty(),
-                            subtitle = listOfNotNull(
-                                areaLabel(meal.area),
-                                categoryLabel(meal.category).takeIf { it.isNotBlank() }
-                            ).joinToString(" · "),
+                            subtitle = joinDetails(areaLabel(meal.area), categoryLabel(meal.category)),
                             price = formatPrice(MealPricing.priceCentsFor(meal.id)),
                             imageUrl = meal.thumbnail,
                             onClick = { meal.id?.let { onIntent(SearchIntent.MealClicked(it)) } },

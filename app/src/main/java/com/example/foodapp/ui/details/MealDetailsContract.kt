@@ -1,12 +1,13 @@
 package com.example.foodapp.ui.details
 
 import com.example.foodapp.domain.model.MealModel
+import com.example.foodapp.ui.util.UiText
 
 data class MealDetailsState(
     val mealId: String = "",
     val isLoading: Boolean = false,
     val meal: MealModel? = null,
-    val error: String? = null,
+    val error: UiText? = null,
     val unitPriceCents: Int = 0,
     val quantity: Int = 1,
     val showFullRecipe: Boolean = false,

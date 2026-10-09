@@ -15,12 +15,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.foodapp.R
 import com.example.foodapp.ui.theme.Spacing
 
 /** Champ de formulaire : libellé + champ arrondi + message d'erreur. */
@@ -105,7 +107,7 @@ fun AuthTextField(
                 ) {
                     Icon(
                         imageVector = if (passwordVisible) BoucheeIcons.EyeOff else BoucheeIcons.Eye,
-                        contentDescription = if (passwordVisible) "Masquer le mot de passe" else "Afficher le mot de passe",
+                        contentDescription = stringResource(if (passwordVisible) R.string.component_hide_password else R.string.component_show_password),
                         tint = colors.onSurfaceVariant,
                         modifier = Modifier.size(22.dp)
                     )
@@ -127,7 +129,7 @@ fun OrDivider(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant)
-        Text("ou", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(stringResource(R.string.common_or), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         HorizontalDivider(modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.outlineVariant)
     }
 }
@@ -155,7 +157,7 @@ fun GoogleButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Bo
             Text("G", color = Color.White, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
         }
         Text(
-            "Continuer avec Google",
+            stringResource(R.string.component_continue_with_google),
             style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(start = Spacing.m)
         )

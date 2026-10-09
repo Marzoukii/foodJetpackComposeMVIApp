@@ -1,13 +1,14 @@
 package com.example.foodapp.ui.confirmation
 
+import androidx.annotation.StringRes
 import com.example.foodapp.domain.model.OrderStatus
 import com.example.foodapp.domain.model.OrderType
-import com.example.foodapp.ui.util.label
-import com.example.foodapp.ui.util.subtitle
+import com.example.foodapp.ui.util.labelRes
+import com.example.foodapp.ui.util.subtitleRes
 
 enum class StepStatus { Done, Current, Upcoming }
 
-data class OrderStep(val label: String, val subtitle: String, val status: StepStatus)
+data class OrderStep(@StringRes val labelRes: Int, @StringRes val subtitleRes: Int, val status: StepStatus)
 
 data class ConfirmationState(
     val orderNumber: String = "",
@@ -23,7 +24,7 @@ data class ConfirmationState(
                 status == orderStatus -> StepStatus.Current
                 else -> StepStatus.Upcoming
             }
-            OrderStep(status.label(orderType), status.subtitle, stepStatus)
+            OrderStep(status.labelRes(orderType), status.subtitleRes, stepStatus)
         }
 }
 

@@ -26,11 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.ui.components.AuthTextField
 import com.example.foodapp.ui.components.GoogleButton
 import com.example.foodapp.ui.components.OrDivider
@@ -39,6 +41,7 @@ import com.example.foodapp.ui.theme.FoodAppTheme
 import com.example.foodapp.ui.theme.Spacing
 import com.example.foodapp.ui.util.GoogleSignInResult
 import com.example.foodapp.ui.util.requestGoogleIdToken
+import com.example.foodapp.ui.util.uiText
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,7 +69,7 @@ fun LoginRoute(
                 }
                 is LoginEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
                 }
             }
         }
@@ -94,11 +97,11 @@ fun LoginScreen(
                 .padding(horizontal = Spacing.xxl, vertical = Spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
-            Text("Bouchée", style = MaterialTheme.typography.titleLarge, color = colors.primary)
+            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge, color = colors.primary)
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
-                Text("Content de vous revoir", style = MaterialTheme.typography.displayMedium)
+                Text(stringResource(R.string.login_title), style = MaterialTheme.typography.displayMedium)
                 Text(
-                    "Connectez-vous pour retrouver votre panier et vos commandes.",
+                    stringResource(R.string.login_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurfaceVariant
                 )
@@ -106,21 +109,21 @@ fun LoginScreen(
             Spacer(Modifier.height(Spacing.xs))
 
             AuthTextField(
-                label = "E-mail",
+                label = stringResource(R.string.common_email),
                 value = state.email,
                 onValueChange = { onIntent(LoginIntent.EmailChanged(it)) },
-                placeholder = "vous@exemple.fr",
-                error = state.emailError,
+                placeholder = stringResource(R.string.common_email_placeholder),
+                error = state.emailError?.asString(),
                 keyboardType = KeyboardType.Email,
                 enabled = !state.isLoading
             )
             Column {
                 AuthTextField(
-                    label = "Mot de passe",
+                    label = stringResource(R.string.common_password),
                     value = state.password,
                     onValueChange = { onIntent(LoginIntent.PasswordChanged(it)) },
-                    placeholder = "Votre mot de passe",
-                    error = state.passwordError,
+                    placeholder = stringResource(R.string.login_password_placeholder),
+                    error = state.passwordError?.asString(),
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done,
                     onImeAction = {
@@ -136,12 +139,12 @@ fun LoginScreen(
                     onClick = { onIntent(LoginIntent.ForgotPasswordClicked) },
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Mot de passe oublié ?", style = MaterialTheme.typography.labelLarge, color = colors.primary)
+                    Text(stringResource(R.string.login_forgot_password), style = MaterialTheme.typography.labelLarge, color = colors.primary)
                 }
             }
 
             PrimaryButton(
-                text = if (state.isLoading) "Connexion…" else "Se connecter",
+                text = stringResource(if (state.isLoading) R.string.login_loading else R.string.common_sign_in),
                 onClick = {
                     focusManager.clearFocus()
                     onIntent(LoginIntent.LoginClicked)
@@ -157,9 +160,9 @@ fun LoginScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Pas encore de compte ?", style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+                Text(stringResource(R.string.login_no_account), style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
                 TextButton(onClick = { onIntent(LoginIntent.RegisterClicked) }) {
-                    Text("Créer un compte", style = MaterialTheme.typography.labelLarge, color = colors.primary)
+                    Text(stringResource(R.string.login_create_account), style = MaterialTheme.typography.labelLarge, color = colors.primary)
                 }
             }
         }
@@ -171,7 +174,7 @@ fun LoginScreen(
 private fun LoginPreview() {
     FoodAppTheme {
         LoginScreen(
-            state = LoginState(email = "marie@exemple.fr", passwordError = "Saisissez votre mot de passe"),
+            state = LoginState(email = "marie@exemple.fr", passwordError = uiText(R.string.login_password_required)),
             snackbarHostState = SnackbarHostState(),
             onIntent = {}
         )
