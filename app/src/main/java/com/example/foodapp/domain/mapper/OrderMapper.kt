@@ -1,5 +1,6 @@
 package com.example.foodapp.domain.mapper
 
+import com.example.foodapp.domain.model.OrderItemModel
 import com.example.foodapp.domain.model.OrderModel
 import com.example.foodapp.domain.model.OrderStatus
 import com.example.foodapp.domain.model.OrderType
@@ -22,6 +23,14 @@ class OrderMapper @Inject constructor() {
             tableNumber = snapshot.child("tableNumber").getValue(Int::class.java),
             itemCount = snapshot.child("items").children.sumOf {
                 it.child("quantity").getValue(Int::class.java) ?: 0
+            },
+            items = snapshot.child("items").children.map { item ->
+                OrderItemModel(
+                    name = item.child("name").getValue(String::class.java).orEmpty(),
+                    quantity = item.child("quantity").getValue(Int::class.java) ?: 0,
+                    removedIngredients = item.child("removedIngredients").children
+                        .mapNotNull { it.getValue(String::class.java) }
+                )
             },
             totalCents = snapshot.child("totalCents").getValue(Int::class.java) ?: 0
         )

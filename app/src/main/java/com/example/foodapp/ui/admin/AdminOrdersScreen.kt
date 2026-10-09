@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.domain.model.OrderItemModel
 import com.example.foodapp.domain.model.OrderModel
 import com.example.foodapp.domain.model.OrderStatus
 import com.example.foodapp.domain.model.OrderType
@@ -140,6 +141,23 @@ private fun AdminOrderCard(order: OrderModel, onStatusSelected: (OrderStatus) ->
                 "${order.itemCount} article${if (order.itemCount > 1) "s" else ""} · ${formatPrice(order.totalCents)}",
                 style = MaterialTheme.typography.bodyMedium
             )
+            if (order.items.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+                    order.items.forEach { item ->
+                        Column {
+                            Text("${item.quantity} × ${item.name}", style = MaterialTheme.typography.bodySmall)
+                            if (item.removedIngredients.isNotEmpty()) {
+                                Text(
+                                    item.removedIngredients.joinToString(", ") { "Sans $it" },
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                                    color = colors.error,
+                                    modifier = Modifier.padding(start = Spacing.m)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
             Row(
                 modifier = Modifier
                     .horizontalScroll(rememberScrollState())
@@ -173,6 +191,10 @@ private fun AdminOrdersPreview() {
         address = "12 rue de la Paix, Paris",
         tableNumber = null,
         itemCount = 3,
+        items = listOf(
+            OrderItemModel("Chicken Handi", 2, listOf("Harissa", "Onion")),
+            OrderItemModel("Chocolate Gateau", 1)
+        ),
         totalCents = 2450
     )
     val dineIn = order.copy(orderNumber = "482913", status = OrderStatus.RECEIVED, orderType = OrderType.DINE_IN, address = "", tableNumber = 7)

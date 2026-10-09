@@ -6,8 +6,8 @@ import javax.inject.Inject
 class UpdateCartQuantityUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
-    /** Une quantité à 0 retire le plat du panier. */
-    suspend fun execute(mealId: String, quantity: Int) {
-        cartRepository.updateQuantity(mealId, quantity)
+    /** Une quantité à 0 retire la ligne du panier. */
+    suspend fun execute(lineId: String, quantity: Int) {
+        cartRepository.updateQuantity(lineId, quantity)
     }
 }

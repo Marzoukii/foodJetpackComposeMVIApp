@@ -40,6 +40,12 @@ class MealDetailsViewModel @Inject constructor(
                 copy(quantity = (quantity - 1).coerceAtLeast(1))
             }
             MealDetailsIntent.ToggleRecipe -> setState { copy(showFullRecipe = !showFullRecipe) }
+            is MealDetailsIntent.ToggleIngredient -> setState {
+                copy(
+                    removedIngredients = if (intent.ingredient in removedIngredients) removedIngredients - intent.ingredient
+                    else removedIngredients + intent.ingredient
+                )
+            }
             MealDetailsIntent.AddToCartClicked -> addToCart()
             MealDetailsIntent.BackClicked -> sendEffect(MealDetailsEffect.NavigateBack)
         }
@@ -75,7 +81,8 @@ class MealDetailsViewModel @Inject constructor(
                 mealId = currentState.mealId,
                 name = meal.name.orEmpty(),
                 thumbnail = meal.thumbnail,
-                quantity = currentState.quantity
+                quantity = currentState.quantity,
+                removedIngredients = currentState.removedIngredients
             )
             sendEffect(MealDetailsEffect.NavigateToCart)
         }

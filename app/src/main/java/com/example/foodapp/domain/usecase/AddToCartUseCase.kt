@@ -6,7 +6,13 @@ import javax.inject.Inject
 class AddToCartUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
-    suspend fun execute(mealId: String, name: String, thumbnail: String?, quantity: Int = 1) {
-        cartRepository.addToCart(mealId, name, thumbnail, quantity)
+    suspend fun execute(
+        mealId: String,
+        name: String,
+        thumbnail: String?,
+        quantity: Int = 1,
+        removedIngredients: Set<String> = emptySet()
+    ) {
+        cartRepository.addToCart(mealId, name, thumbnail, quantity, removedIngredients)
     }
 }

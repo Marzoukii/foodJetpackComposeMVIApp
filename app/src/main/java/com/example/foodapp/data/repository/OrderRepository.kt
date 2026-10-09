@@ -67,7 +67,8 @@ class OrderRepository @Inject constructor(
                     "name" to it.name,
                     "thumbnail" to it.thumbnail,
                     "unitPriceCents" to it.unitPriceCents,
-                    "quantity" to it.quantity
+                    "quantity" to it.quantity,
+                    "removedIngredients" to it.removedIngredients
                 )
             }
         )

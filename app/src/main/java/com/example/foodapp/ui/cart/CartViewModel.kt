@@ -32,8 +32,8 @@ class CartViewModel @Inject constructor(
 
     override fun onIntent(intent: CartIntent) {
         when (intent) {
-            is CartIntent.IncrementClicked -> changeQuantity(intent.mealId, +1)
-            is CartIntent.DecrementClicked -> changeQuantity(intent.mealId, -1)
+            is CartIntent.IncrementClicked -> changeQuantity(intent.lineId, +1)
+            is CartIntent.DecrementClicked -> changeQuantity(intent.lineId, -1)
             CartIntent.ClearClicked -> viewModelScope.launch { clearCartUseCase.execute() }
             CartIntent.CheckoutClicked -> if (currentState.items.isNotEmpty()) sendEffect(CartEffect.NavigateToCheckout)
             CartIntent.BrowseMenuClicked -> sendEffect(CartEffect.NavigateToMenu)
@@ -41,10 +41,10 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private fun changeQuantity(mealId: String, delta: Int) {
-        val item = currentState.items.firstOrNull { it.mealId == mealId } ?: return
+    private fun changeQuantity(lineId: String, delta: Int) {
+        val item = currentState.items.firstOrNull { it.lineId == lineId } ?: return
         viewModelScope.launch {
-            updateCartQuantityUseCase.execute(mealId, item.quantity + delta)
+            updateCartQuantityUseCase.execute(lineId, item.quantity + delta)
         }
     }
 }

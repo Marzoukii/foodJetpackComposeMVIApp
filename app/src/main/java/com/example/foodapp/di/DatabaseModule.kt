@@ -18,7 +18,10 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "food_app.db").build()
+        // Le panier est temporaire : à un changement de schéma, on le vide plutôt que de le migrer.
+        return Room.databaseBuilder(context, AppDatabase::class.java, "food_app.db")
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     @Provides

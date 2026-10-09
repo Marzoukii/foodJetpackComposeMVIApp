@@ -16,8 +16,8 @@ data class CartState(
 }
 
 sealed interface CartIntent {
-    data class IncrementClicked(val mealId: String) : CartIntent
-    data class DecrementClicked(val mealId: String) : CartIntent
+    data class IncrementClicked(val lineId: String) : CartIntent
+    data class DecrementClicked(val lineId: String) : CartIntent
     data object ClearClicked : CartIntent
     data object CheckoutClicked : CartIntent
     data object BrowseMenuClicked : CartIntent

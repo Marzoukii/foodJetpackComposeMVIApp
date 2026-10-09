@@ -12,29 +12,29 @@ interface CartDao {
     @Query("SELECT * FROM cart_items ORDER BY addedAt")
     fun observeAll(): Flow<List<CartItemEntity>>
 
-    @Query("SELECT * FROM cart_items WHERE mealId = :mealId")
-    suspend fun getById(mealId: String): CartItemEntity?
+    @Query("SELECT * FROM cart_items WHERE lineId = :lineId")
+    suspend fun getById(lineId: String): CartItemEntity?
 
     @Upsert
     suspend fun upsert(item: CartItemEntity)
 
-    @Query("UPDATE cart_items SET quantity = :quantity WHERE mealId = :mealId")
-    suspend fun updateQuantity(mealId: String, quantity: Int)
+    @Query("UPDATE cart_items SET quantity = :quantity WHERE lineId = :lineId")
+    suspend fun updateQuantity(lineId: String, quantity: Int)
 
-    @Query("DELETE FROM cart_items WHERE mealId = :mealId")
-    suspend fun delete(mealId: String)
+    @Query("DELETE FROM cart_items WHERE lineId = :lineId")
+    suspend fun delete(lineId: String)
 
     @Query("DELETE FROM cart_items")
     suspend fun clear()
 
-    /** Ajoute le plat, ou augmente sa quantité s'il est déjà dans le panier. */
+    /** Ajoute la ligne, ou augmente sa quantité si le même plat (mêmes ingrédients retirés) y est déjà. */
     @Transaction
     suspend fun addOrIncrement(item: CartItemEntity) {
-        val existing = getById(item.mealId)
+        val existing = getById(item.lineId)
         if (existing == null) {
             upsert(item)
         } else {
-            updateQuantity(item.mealId, (existing.quantity + item.quantity).coerceAtMost(MAX_QUANTITY))
+            updateQuantity(item.lineId, (existing.quantity + item.quantity).coerceAtMost(MAX_QUANTITY))
         }
     }
 

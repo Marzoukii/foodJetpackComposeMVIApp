@@ -39,5 +39,13 @@ data class OrderModel(
     val address: String,
     val tableNumber: Int?,
     val itemCount: Int,
+    val items: List<OrderItemModel> = emptyList(),
     val totalCents: Int
+)
+
+/** Un article d'une commande, avec les ingrédients que le client a retirés (pour la cuisine). */
+data class OrderItemModel(
+    val name: String,
+    val quantity: Int,
+    val removedIngredients: List<String> = emptyList()
 )
