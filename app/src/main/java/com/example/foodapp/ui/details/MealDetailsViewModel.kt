@@ -2,12 +2,15 @@ package com.example.foodapp.ui.details
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.domain.usecase.AddToCartUseCase
 import com.example.foodapp.domain.usecase.GetMealDetailsUseCase
 import com.example.foodapp.navigation.Routes
 import com.example.foodapp.ui.base.MviViewModel
+import com.example.foodapp.ui.util.toUiText
+import com.example.foodapp.ui.util.uiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -62,12 +65,12 @@ class MealDetailsViewModel @Inject constructor(
                             copy(
                                 isLoading = false,
                                 meal = meal,
-                                error = if (meal == null) "Plat introuvable" else null
+                                error = if (meal == null) uiText(R.string.details_not_found) else null
                             )
                         }
                     }
                     is NetworkResult.Error -> setState {
-                        copy(isLoading = false, error = result.exception.message ?: "Erreur inconnue")
+                        copy(isLoading = false, error = result.exception.toUiText(R.string.common_unknown_error))
                     }
                 }
             }

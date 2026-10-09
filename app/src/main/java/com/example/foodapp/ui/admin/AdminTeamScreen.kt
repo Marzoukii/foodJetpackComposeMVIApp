@@ -23,10 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.TeamMemberModel
 import com.example.foodapp.ui.components.BackTopBar
 import com.example.foodapp.ui.components.EmptyView
@@ -46,6 +49,7 @@ fun AdminTeamRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -53,7 +57,7 @@ fun AdminTeamRoute(
                 AdminTeamEffect.NavigateBack -> onNavigateBack()
                 is AdminTeamEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
                 }
             }
         }
@@ -72,7 +76,7 @@ fun AdminTeamScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                title = "Équipe",
+                title = stringResource(R.string.admin_team),
                 onBack = { onIntent(AdminTeamIntent.BackClicked) },
                 modifier = Modifier.statusBarsPadding()
             )
@@ -82,7 +86,7 @@ fun AdminTeamScreen(
         when {
             state.isLoading -> LoadingView(Modifier.padding(padding))
             state.error != null -> ErrorView(
-                message = state.error,
+                message = state.error.asString(),
                 onRetry = { onIntent(AdminTeamIntent.Retry) },
                 modifier = Modifier.padding(padding)
             )
@@ -94,11 +98,11 @@ fun AdminTeamScreen(
                 SearchField(
                     value = state.query,
                     onValueChange = { onIntent(AdminTeamIntent.QueryChanged(it)) },
-                    placeholder = "Rechercher un e-mail",
+                    placeholder = stringResource(R.string.admin_team_search),
                     modifier = Modifier.padding(horizontal = Spacing.xl, vertical = Spacing.s)
                 )
                 if (state.filteredMembers.isEmpty()) {
-                    EmptyView(message = "Aucun compte trouvé")
+                    EmptyView(message = stringResource(R.string.admin_team_empty))
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(start = Spacing.xl, end = Spacing.xl, top = Spacing.s, bottom = Spacing.l),
@@ -136,7 +140,7 @@ private fun TeamMemberRow(member: TeamMemberModel, isCurrentUser: Boolean, onAdm
                 )
                 Text(
                     when {
-                        isCurrentUser -> "${member.email} · vous"
+                        isCurrentUser -> stringResource(R.string.admin_team_you, member.email)
                         else -> member.email
                     },
                     style = MaterialTheme.typography.bodySmall,
@@ -145,7 +149,7 @@ private fun TeamMemberRow(member: TeamMemberModel, isCurrentUser: Boolean, onAdm
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    if (member.isAdmin) "Admin" else "Client",
+                    stringResource(if (member.isAdmin) R.string.admin_role_admin else R.string.admin_role_client),
                     style = MaterialTheme.typography.bodySmall,
                     color = if (member.isAdmin) colors.primary else colors.onSurfaceVariant
                 )

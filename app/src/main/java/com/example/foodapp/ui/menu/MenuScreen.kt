@@ -26,10 +26,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.MealItemModel
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.components.BackTopBar
@@ -44,6 +48,7 @@ import com.example.foodapp.ui.theme.FoodAppTheme
 import com.example.foodapp.ui.theme.Spacing
 import com.example.foodapp.ui.util.categoryLabel
 import com.example.foodapp.ui.util.formatPrice
+import com.example.foodapp.ui.util.joinDetails
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,6 +62,7 @@ fun MenuRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -66,7 +72,7 @@ fun MenuRoute(
                 MenuEffect.NavigateBack -> onNavigateBack()
                 is MenuEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
                 }
             }
         }
@@ -90,7 +96,7 @@ fun MenuScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                title = categoryLabel(state.selectedCategory).ifBlank { "Menu" },
+                title = categoryLabel(state.selectedCategory).ifBlank { stringResource(R.string.menu_title) },
                 onBack = { onIntent(MenuIntent.BackClicked) },
                 modifier = Modifier.statusBarsPadding()
             )
@@ -126,8 +132,8 @@ fun MenuScreen(
 
             when {
                 state.isLoading -> LoadingView()
-                state.error != null -> ErrorView(message = state.error, onRetry = { onIntent(MenuIntent.Retry) })
-                state.meals.isEmpty() -> EmptyView("Aucun plat dans cette catégorie")
+                state.error != null -> ErrorView(message = state.error.asString(), onRetry = { onIntent(MenuIntent.Retry) })
+                state.meals.isEmpty() -> EmptyView(stringResource(R.string.menu_empty))
                 else -> LazyColumn(
                     contentPadding = PaddingValues(start = Spacing.xl, end = Spacing.xl, bottom = Spacing.l),
                     verticalArrangement = Arrangement.spacedBy(Spacing.m),
@@ -168,13 +174,13 @@ private fun CartBar(count: Int, totalCents: Int, onClick: () -> Unit) {
             modifier = Modifier.padding(start = 22.dp, end = Spacing.s)
         ) {
             Text(
-                text = "$count article${if (count > 1) "s" else ""} · ${formatPrice(totalCents)}",
+                text = joinDetails(pluralStringResource(R.plurals.common_articles, count, count), formatPrice(totalCents)),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.weight(1f)
             )
             Surface(shape = CircleShape, color = colors.primary, contentColor = colors.onPrimary) {
                 Text(
-                    "Voir le panier",
+                    stringResource(R.string.menu_see_cart),
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp)
                 )

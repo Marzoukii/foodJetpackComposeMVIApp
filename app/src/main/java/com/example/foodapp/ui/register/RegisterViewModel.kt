@@ -1,14 +1,17 @@
 package com.example.foodapp.ui.register
 
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.model.UserModel
 import com.example.foodapp.domain.usecase.SignInWithGoogleUseCase
 import com.example.foodapp.domain.usecase.SignUpUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import com.example.foodapp.ui.util.MIN_PASSWORD_LENGTH
+import com.example.foodapp.ui.util.UiText
 import com.example.foodapp.ui.util.authErrorMessage
 import com.example.foodapp.ui.util.isValidEmail
+import com.example.foodapp.ui.util.uiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
@@ -38,7 +41,7 @@ class RegisterViewModel @Inject constructor(
             is RegisterIntent.GoogleTokenReceived -> authenticate(signInWithGoogleUseCase.execute(intent.idToken))
             is RegisterIntent.GoogleFailed -> {
                 setState { copy(isLoading = false) }
-                intent.message?.let { sendEffect(RegisterEffect.ShowMessage(it)) }
+                intent.message?.let { sendEffect(RegisterEffect.ShowMessage(UiText.Dynamic(it))) }
             }
             RegisterIntent.LoginClicked -> sendEffect(RegisterEffect.NavigateToLogin)
         }
@@ -47,17 +50,17 @@ class RegisterViewModel @Inject constructor(
     private fun register() {
         val state = currentState
         if (state.isLoading) return
-        val nameError = if (state.name.isBlank()) "Saisissez votre nom" else null
+        val nameError = if (state.name.isBlank()) uiText(R.string.register_name_required) else null
         val emailError = when {
-            state.email.isBlank() -> "Saisissez votre e-mail"
-            !isValidEmail(state.email) -> "E-mail invalide"
+            state.email.isBlank() -> uiText(R.string.login_email_required)
+            !isValidEmail(state.email) -> uiText(R.string.login_email_invalid)
             else -> null
         }
         val passwordError = if (state.password.length < MIN_PASSWORD_LENGTH) {
-            "$MIN_PASSWORD_LENGTH caractères minimum"
+            uiText(R.string.register_password_min, MIN_PASSWORD_LENGTH)
         } else null
         val confirmPasswordError = if (state.confirmPassword != state.password) {
-            "Les mots de passe ne correspondent pas"
+            uiText(R.string.register_passwords_mismatch)
         } else null
 
         if (listOf(nameError, emailError, passwordError, confirmPasswordError).any { it != null }) {

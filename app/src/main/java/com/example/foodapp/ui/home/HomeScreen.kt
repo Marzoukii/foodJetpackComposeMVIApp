@@ -31,12 +31,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.CategoryModel
 import com.example.foodapp.domain.model.MealModel
 import com.example.foodapp.domain.model.OrderType
@@ -59,6 +61,7 @@ import com.example.foodapp.ui.theme.Spacing
 import com.example.foodapp.ui.util.areaLabel
 import com.example.foodapp.ui.util.categoryLabel
 import com.example.foodapp.ui.util.formatPrice
+import com.example.foodapp.ui.util.joinDetails
 
 @Composable
 fun HomeRoute(
@@ -101,7 +104,7 @@ fun HomeScreen(
         when {
             state.isLoading && state.categories.isEmpty() -> LoadingView(Modifier.padding(padding))
             state.error != null && state.categories.isEmpty() -> ErrorView(
-                message = state.error,
+                message = state.error.asString(),
                 onRetry = { onIntent(HomeIntent.Load) },
                 modifier = Modifier.padding(padding)
             )
@@ -140,7 +143,7 @@ private fun HomeContent(state: HomeState, onIntent: (HomeIntent) -> Unit, modifi
         }
 
         item {
-            Text("On mange quoi aujourd'hui ?", style = MaterialTheme.typography.headlineMedium.copy(fontSize = MaterialTheme.typography.headlineMedium.fontSize * 1.07f))
+            Text(stringResource(R.string.home_title), style = MaterialTheme.typography.headlineMedium.copy(fontSize = MaterialTheme.typography.headlineMedium.fontSize * 1.07f))
         }
 
         item { SearchField(value = "", onValueChange = {}, onClick = { onIntent(HomeIntent.SearchClicked) }) }
@@ -159,7 +162,7 @@ private fun HomeContent(state: HomeState, onIntent: (HomeIntent) -> Unit, modifi
         }
 
         if (state.popularMeals.isNotEmpty()) {
-            item { Text("Populaires", style = MaterialTheme.typography.titleMedium) }
+            item { Text(stringResource(R.string.home_popular), style = MaterialTheme.typography.titleMedium) }
             // Grille de 2 colonnes dans la LazyColumn
             items(state.popularMeals.chunked(2)) { row ->
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.m)) {
@@ -200,7 +203,7 @@ private fun HomeHeader(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                if (isDineIn) "Sur place · changer" else "Livrer à · changer",
+                stringResource(if (isDineIn) R.string.home_dine_in_change else R.string.home_delivery_change),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -213,9 +216,9 @@ private fun HomeHeader(
                 )
                 Text(
                     text = if (isDineIn) {
-                        tableNumber?.let { "Table n° $it" } ?: "Table à indiquer au paiement"
+                        tableNumber?.let { stringResource(R.string.common_table_label, it) } ?: stringResource(R.string.home_table_at_checkout)
                     } else {
-                        address.ifBlank { "Ajoutez une adresse au paiement" }
+                        address.ifBlank { stringResource(R.string.home_address_at_checkout) }
                     },
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 1,
@@ -224,7 +227,7 @@ private fun HomeHeader(
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
-            CircleIconButton(BoucheeIcons.User, contentDescription = "Mon compte", onClick = onAccountClick)
+            CircleIconButton(BoucheeIcons.User, contentDescription = stringResource(R.string.home_my_account), onClick = onAccountClick)
             CartIconButton(count = cartCount, onClick = onCartClick)
         }
     }
@@ -246,31 +249,31 @@ private fun AccountDialog(
         title = {
             Text(
                 when {
-                    user?.isAnonymous == true -> "Invité"
-                    else -> user?.name?.takeIf { it.isNotBlank() } ?: "Mon compte"
+                    user?.isAnonymous == true -> stringResource(R.string.home_guest)
+                    else -> user?.name?.takeIf { it.isNotBlank() } ?: stringResource(R.string.home_my_account)
                 }
             )
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.m)) {
                 Text(
-                    if (user?.isAnonymous == true) "Commande sur place, sans compte" else user?.email.orEmpty(),
+                    if (user?.isAnonymous == true) stringResource(R.string.home_guest_subtitle) else user?.email.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colors.onSurfaceVariant
                 )
                 if (isAdmin) {
-                    OutlinedPillButton(text = "Gérer les commandes", onClick = onAdminOrders, modifier = Modifier.fillMaxWidth())
+                    OutlinedPillButton(text = stringResource(R.string.home_manage_orders), onClick = onAdminOrders, modifier = Modifier.fillMaxWidth())
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onSignOut) {
                 Icon(BoucheeIcons.Logout, contentDescription = null, tint = colors.primary, modifier = Modifier.size(18.dp))
-                Text("Se déconnecter", color = colors.primary, modifier = Modifier.padding(start = Spacing.s))
+                Text(stringResource(R.string.common_sign_out), color = colors.primary, modifier = Modifier.padding(start = Spacing.s))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Fermer", color = colors.onSurface) }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close), color = colors.onSurface) }
         },
         containerColor = colors.surfaceContainer
     )
@@ -293,7 +296,7 @@ private fun MealOfTheDayCard(meal: MealModel, onClick: () -> Unit) {
         ) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Tag(
-                    text = "Plat du jour",
+                    text = stringResource(R.string.home_meal_of_the_day),
                     background = colors.secondary,
                     contentColor = colors.onSecondary
                 )
@@ -303,7 +306,7 @@ private fun MealOfTheDayCard(meal: MealModel, onClick: () -> Unit) {
                     categoryLabel(meal.category).takeIf { it.isNotBlank() },
                     formatPrice(MealPricing.priceCentsFor(meal.id))
                 )
-                Text(details.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = colors.outlineVariant)
+                Text(joinDetails(*details.toTypedArray()), style = MaterialTheme.typography.bodySmall, color = colors.outlineVariant)
             }
             MealImage(
                 url = meal.thumbnail,
@@ -325,9 +328,9 @@ private fun CategoriesSection(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.m)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Catégories", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.home_categories), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
             TextButton(onClick = onSeeAll) {
-                Text("Tout voir", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
+                Text(stringResource(R.string.home_see_all), style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
             }
         }
         LazyRow(horizontalArrangement = Arrangement.spacedBy(14.dp)) {

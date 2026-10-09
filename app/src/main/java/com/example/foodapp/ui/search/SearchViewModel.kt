@@ -1,10 +1,13 @@
 package com.example.foodapp.ui.search
 
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.usecase.AddToCartUseCase
 import com.example.foodapp.domain.usecase.SearchMealsUseCase
 import com.example.foodapp.ui.base.MviViewModel
+import com.example.foodapp.ui.util.toUiText
+import com.example.foodapp.ui.util.uiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -49,7 +52,7 @@ class SearchViewModel @Inject constructor(
                         copy(isLoading = false, hasSearched = true, results = result.data?.meals.orEmpty())
                     }
                     is NetworkResult.Error -> setState {
-                        copy(isLoading = false, error = result.exception.message ?: "Erreur inconnue")
+                        copy(isLoading = false, error = result.exception.toUiText(R.string.common_unknown_error))
                     }
                 }
             }
@@ -61,7 +64,7 @@ class SearchViewModel @Inject constructor(
         val id = meal.id ?: return
         viewModelScope.launch {
             addToCartUseCase.execute(id, meal.name.orEmpty(), meal.thumbnail)
-            sendEffect(SearchEffect.ShowMessage("${meal.name} ajouté au panier"))
+            sendEffect(SearchEffect.ShowMessage(uiText(R.string.common_added_to_cart, meal.name.orEmpty())))
         }
     }
 

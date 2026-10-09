@@ -5,10 +5,11 @@ import com.example.foodapp.domain.model.MealItemModel
 import com.example.foodapp.domain.model.MealModel
 import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.domain.model.UserModel
+import com.example.foodapp.ui.util.UiText
 
 data class HomeState(
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val error: UiText? = null,
     val deliveryAddress: String = "",
     val orderType: OrderType = OrderType.DELIVERY,
     val tableNumber: Int? = null,

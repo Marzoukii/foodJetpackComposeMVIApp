@@ -1,12 +1,14 @@
 package com.example.foodapp.ui.admin
 
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.model.TeamMemberModel
 import com.example.foodapp.domain.usecase.GetCurrentUserUseCase
 import com.example.foodapp.domain.usecase.ObserveTeamUseCase
 import com.example.foodapp.domain.usecase.SetAdminUseCase
 import com.example.foodapp.ui.base.MviViewModel
+import com.example.foodapp.ui.util.uiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -45,7 +47,7 @@ class AdminTeamViewModel @Inject constructor(
             .onStart { setState { copy(isLoading = true, error = null) } }
             .onEach { members -> setState { copy(isLoading = false, members = members) } }
             .catch {
-                setState { copy(isLoading = false, error = "Accès refusé : ce compte n'est pas administrateur") }
+                setState { copy(isLoading = false, error = uiText(R.string.admin_access_denied)) }
             }
             .launchIn(viewModelScope)
     }
@@ -56,8 +58,8 @@ class AdminTeamViewModel @Inject constructor(
             .onEach { result ->
                 val message = when (result) {
                     is NetworkResult.Success ->
-                        if (isAdmin) "${member.email} est maintenant admin" else "${member.email} n'est plus admin"
-                    is NetworkResult.Error -> "Impossible de modifier le rôle"
+                        uiText(if (isAdmin) R.string.admin_now_admin else R.string.admin_no_longer_admin, member.email)
+                    is NetworkResult.Error -> uiText(R.string.admin_role_change_failed)
                 }
                 sendEffect(AdminTeamEffect.ShowMessage(message))
             }

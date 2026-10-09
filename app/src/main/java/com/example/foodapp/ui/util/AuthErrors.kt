@@ -1,6 +1,7 @@
 package com.example.foodapp.ui.util
 
 import android.util.Patterns
+import com.example.foodapp.R
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuthException
@@ -16,16 +17,15 @@ private val DISABLED_PROVIDER_CODES = setOf("ERROR_ADMIN_RESTRICTED_OPERATION", 
 fun isValidEmail(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()
 
 /** Traduit les exceptions Firebase Auth en message lisible. */
-fun authErrorMessage(e: Exception): String = when (e) {
+fun authErrorMessage(e: Exception): UiText = when (e) {
     // WeakPassword hérite de InvalidCredentials : il doit passer avant.
-    is FirebaseAuthWeakPasswordException -> "Mot de passe trop faible ($MIN_PASSWORD_LENGTH caractères minimum)"
-    is FirebaseAuthUserCollisionException -> "Un compte existe déjà avec cet e-mail"
-    is FirebaseAuthInvalidUserException -> "Aucun compte actif ne correspond à cet e-mail"
-    is FirebaseAuthInvalidCredentialsException -> "E-mail ou mot de passe incorrect"
-    is FirebaseTooManyRequestsException -> "Trop de tentatives, réessayez dans quelques minutes"
-    is FirebaseNetworkException -> "Pas de connexion internet"
+    is FirebaseAuthWeakPasswordException -> uiText(R.string.auth_error_weak_password, MIN_PASSWORD_LENGTH)
+    is FirebaseAuthUserCollisionException -> uiText(R.string.auth_error_email_in_use)
+    is FirebaseAuthInvalidUserException -> uiText(R.string.auth_error_no_account)
+    is FirebaseAuthInvalidCredentialsException -> uiText(R.string.auth_error_invalid_credentials)
+    is FirebaseTooManyRequestsException -> uiText(R.string.auth_error_too_many_requests)
+    is FirebaseNetworkException -> uiText(R.string.auth_error_no_network)
     // Méthode de connexion désactivée dans la console Firebase (ex. connexion anonyme pour « Sur place »).
-    is FirebaseAuthException if e.errorCode in DISABLED_PROVIDER_CODES ->
-        "Ce mode de connexion n'est pas activé. Contactez le restaurant."
-    else -> e.message ?: "Une erreur est survenue"
+    is FirebaseAuthException if e.errorCode in DISABLED_PROVIDER_CODES -> uiText(R.string.auth_error_provider_disabled)
+    else -> e.toUiText(R.string.common_generic_error)
 }

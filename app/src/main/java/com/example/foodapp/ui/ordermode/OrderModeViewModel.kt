@@ -1,6 +1,7 @@
 package com.example.foodapp.ui.ordermode
 
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.domain.usecase.GetCurrentUserUseCase
@@ -9,6 +10,7 @@ import com.example.foodapp.domain.usecase.SaveOrderModeUseCase
 import com.example.foodapp.domain.usecase.SignInAsGuestUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import com.example.foodapp.ui.util.authErrorMessage
+import com.example.foodapp.ui.util.uiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -58,7 +60,7 @@ class OrderModeViewModel @Inject constructor(
         if (state.isLoading) return
         val tableNumber = state.tableNumberDraft.toIntOrNull()?.takeIf { it > 0 }
         if (tableNumber == null) {
-            setState { copy(tableNumberError = "Saisissez votre numéro de table") }
+            setState { copy(tableNumberError = uiText(R.string.order_mode_table_required)) }
             return
         }
         saveOrderModeUseCase.execute(OrderType.DINE_IN, tableNumber)

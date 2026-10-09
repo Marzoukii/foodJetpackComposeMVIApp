@@ -2,6 +2,7 @@ package com.example.foodapp.ui.checkout
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.usecase.AuthenticationRequiredException
 import com.example.foodapp.domain.usecase.GetAuthStateUseCase
@@ -12,6 +13,7 @@ import com.example.foodapp.domain.usecase.GetTableNumberUseCase
 import com.example.foodapp.domain.usecase.PlaceOrderUseCase
 import com.example.foodapp.domain.usecase.SaveDeliveryAddressUseCase
 import com.example.foodapp.ui.base.MviViewModel
+import com.example.foodapp.ui.util.uiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -89,13 +91,13 @@ class CheckoutViewModel @Inject constructor(
         val tableNumber = state.tableNumber.toIntOrNull()?.takeIf { it > 0 }
         when {
             state.isPlacingOrder -> return
-            state.itemCount == 0 -> sendEffect(CheckoutEffect.ShowMessage("Votre panier est vide"))
+            state.itemCount == 0 -> sendEffect(CheckoutEffect.ShowMessage(uiText(R.string.cart_empty)))
             state.isDelivery && state.isGuest -> sendEffect(CheckoutEffect.NavigateToLogin)
             state.isDelivery && state.address.isBlank() -> {
-                sendEffect(CheckoutEffect.ShowMessage("Ajoutez une adresse de livraison"))
+                sendEffect(CheckoutEffect.ShowMessage(uiText(R.string.checkout_address_required)))
                 setState { copy(isEditingAddress = true, addressDraft = address) }
             }
-            !state.isDelivery && tableNumber == null -> setState { copy(tableNumberError = "Saisissez votre numéro de table") }
+            !state.isDelivery && tableNumber == null -> setState { copy(tableNumberError = uiText(R.string.order_mode_table_required)) }
             else -> {
                 setState { copy(isPlacingOrder = true) }
                 placeOrderUseCase.execute(
@@ -115,7 +117,7 @@ class CheckoutViewModel @Inject constructor(
                                     sendEffect(CheckoutEffect.NavigateToLogin)
                                 } else {
                                     Log.w(TAG, "Échec de l'envoi de la commande", result.exception)
-                                    sendEffect(CheckoutEffect.ShowMessage("Impossible d'envoyer la commande, vérifiez votre connexion"))
+                                    sendEffect(CheckoutEffect.ShowMessage(uiText(R.string.checkout_order_failed)))
                                 }
                             }
                         }

@@ -1,20 +1,27 @@
 package com.example.foodapp.ui.checkout
 
+import androidx.annotation.StringRes
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.domain.pricing.MealPricing
+import com.example.foodapp.ui.util.UiText
 
-enum class DeliveryMode(val label: String) {
-    Asap("Dès que possible"),
-    Scheduled("Planifier")
+enum class DeliveryMode(@StringRes val labelRes: Int) {
+    Asap(R.string.checkout_delivery_asap),
+    Scheduled(R.string.checkout_delivery_scheduled)
 }
 
-enum class PaymentMethod(val label: String) {
-    Card("Carte bancaire"),
-    Cash("Espèces");
+enum class PaymentMethod(@StringRes val labelRes: Int) {
+    Card(R.string.checkout_payment_card),
+    Cash(R.string.checkout_payment_cash);
 
-    fun subtitle(orderType: OrderType): String {
-        val moment = if (orderType == OrderType.DINE_IN) "à table" else "à la livraison"
-        return if (this == Card) "Par carte, $moment" else moment.replaceFirstChar { it.uppercase() }
+    @StringRes
+    fun subtitleRes(orderType: OrderType): Int {
+        val atTable = orderType == OrderType.DINE_IN
+        return when (this) {
+            Card -> if (atTable) R.string.checkout_card_at_table else R.string.checkout_card_on_delivery
+            Cash -> if (atTable) R.string.checkout_cash_at_table else R.string.checkout_cash_on_delivery
+        }
     }
 }
 
@@ -27,7 +34,7 @@ data class CheckoutState(
     val isEditingAddress: Boolean = false,
     val addressDraft: String = "",
     val tableNumber: String = "",
-    val tableNumberError: String? = null,
+    val tableNumberError: UiText? = null,
     val deliveryMode: DeliveryMode = DeliveryMode.Asap,
     val paymentMethod: PaymentMethod = PaymentMethod.Card,
     val itemCount: Int = 0,
@@ -57,5 +64,5 @@ sealed interface CheckoutEffect {
     /** Livraison en invité : connexion, puis retour au paiement. */
     data object NavigateToLogin : CheckoutEffect
     data object NavigateBack : CheckoutEffect
-    data class ShowMessage(val message: String) : CheckoutEffect
+    data class ShowMessage(val message: UiText) : CheckoutEffect
 }

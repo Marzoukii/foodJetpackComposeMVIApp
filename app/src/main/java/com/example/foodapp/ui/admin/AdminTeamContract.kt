@@ -1,10 +1,11 @@
 package com.example.foodapp.ui.admin
 
 import com.example.foodapp.domain.model.TeamMemberModel
+import com.example.foodapp.ui.util.UiText
 
 data class AdminTeamState(
     val isLoading: Boolean = true,
-    val error: String? = null,
+    val error: UiText? = null,
     val members: List<TeamMemberModel> = emptyList(),
     /** Un admin ne peut pas se retirer lui-même son rôle (il perdrait l'accès à cet écran). */
     val currentUserId: String? = null,
@@ -25,5 +26,5 @@ sealed interface AdminTeamIntent {
 
 sealed interface AdminTeamEffect {
     data object NavigateBack : AdminTeamEffect
-    data class ShowMessage(val message: String) : AdminTeamEffect
+    data class ShowMessage(val message: UiText) : AdminTeamEffect
 }

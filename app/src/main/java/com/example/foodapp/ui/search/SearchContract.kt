@@ -1,13 +1,14 @@
 package com.example.foodapp.ui.search
 
 import com.example.foodapp.domain.model.MealModel
+import com.example.foodapp.ui.util.UiText
 
 data class SearchState(
     val query: String = "",
     val isLoading: Boolean = false,
     val results: List<MealModel> = emptyList(),
     val hasSearched: Boolean = false,
-    val error: String? = null
+    val error: UiText? = null
 )
 
 sealed interface SearchIntent {
@@ -21,5 +22,5 @@ sealed interface SearchIntent {
 sealed interface SearchEffect {
     data class NavigateToMealDetails(val mealId: String) : SearchEffect
     data object NavigateBack : SearchEffect
-    data class ShowMessage(val message: String) : SearchEffect
+    data class ShowMessage(val message: UiText) : SearchEffect
 }

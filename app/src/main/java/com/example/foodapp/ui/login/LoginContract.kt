@@ -1,11 +1,13 @@
 package com.example.foodapp.ui.login
 
+import com.example.foodapp.ui.util.UiText
+
 data class LoginState(
     val email: String = "",
     val password: String = "",
     val isPasswordVisible: Boolean = false,
-    val emailError: String? = null,
-    val passwordError: String? = null,
+    val emailError: UiText? = null,
+    val passwordError: UiText? = null,
     val isLoading: Boolean = false
 )
 
@@ -26,5 +28,5 @@ sealed interface LoginEffect {
     data object NavigateToRegister : LoginEffect
     /** Le sélecteur de compte Google a besoin de l'Activity : il est lancé côté UI. */
     data object LaunchGoogleSignIn : LoginEffect
-    data class ShowMessage(val message: String) : LoginEffect
+    data class ShowMessage(val message: UiText) : LoginEffect
 }

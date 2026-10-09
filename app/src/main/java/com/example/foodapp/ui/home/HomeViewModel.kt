@@ -1,6 +1,7 @@
 package com.example.foodapp.ui.home
 
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.usecase.GetAuthStateUseCase
 import com.example.foodapp.domain.usecase.GetCartItemsUseCase
@@ -14,6 +15,7 @@ import com.example.foodapp.domain.usecase.ObserveIsAdminUseCase
 import com.example.foodapp.domain.usecase.SignOutUseCase
 import com.example.foodapp.domain.usecase.SyncUserProfileUseCase
 import com.example.foodapp.ui.base.MviViewModel
+import com.example.foodapp.ui.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
@@ -101,7 +103,7 @@ class HomeViewModel @Inject constructor(
                         categories.firstOrNull()?.name?.let { loadPopular(it) }
                     }
                     is NetworkResult.Error -> setState {
-                        copy(isLoading = false, error = result.exception.message ?: "Erreur inconnue")
+                        copy(isLoading = false, error = result.exception.toUiText(R.string.common_unknown_error))
                     }
                 }
             }

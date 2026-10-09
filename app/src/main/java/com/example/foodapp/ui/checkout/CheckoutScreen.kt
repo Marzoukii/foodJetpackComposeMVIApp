@@ -37,6 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.ui.components.AuthTextField
 import com.example.foodapp.ui.components.BackTopBar
@@ -68,6 +72,7 @@ fun CheckoutRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -77,7 +82,7 @@ fun CheckoutRoute(
                 CheckoutEffect.NavigateBack -> onNavigateBack()
                 is CheckoutEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    scope.launch { snackbarHostState.showSnackbar(effect.message) }
+                    scope.launch { snackbarHostState.showSnackbar(effect.message.asString(context)) }
                 }
             }
         }
@@ -95,7 +100,7 @@ fun CheckoutScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                title = "Paiement",
+                title = stringResource(R.string.checkout_title),
                 onBack = { onIntent(CheckoutIntent.BackClicked) },
                 modifier = Modifier.statusBarsPadding()
             )
@@ -103,7 +108,7 @@ fun CheckoutScreen(
         bottomBar = {
             StickyBottomBar {
                 PrimaryButton(
-                    text = "Payer ${formatPrice(state.totalCents)}",
+                    text = stringResource(R.string.checkout_pay_with_price, formatPrice(state.totalCents)),
                     onClick = { onIntent(CheckoutIntent.PayClicked) },
                     enabled = !state.isPlacingOrder,
                     modifier = Modifier.weight(1f)
@@ -121,7 +126,7 @@ fun CheckoutScreen(
             verticalArrangement = Arrangement.spacedBy(Spacing.xl)
         ) {
             if (state.isDelivery) {
-                Section("Adresse de livraison") {
+                Section(stringResource(R.string.checkout_delivery_address)) {
                     if (state.isGuest) {
                         SignInCard(onSignIn = { onIntent(CheckoutIntent.SignInClicked) })
                     } else {
@@ -129,20 +134,20 @@ fun CheckoutScreen(
                     }
                 }
 
-                Section("Livraison") {
+                Section(stringResource(R.string.common_delivery)) {
                     SegmentedSelector(
                         options = DeliveryMode.entries,
                         selected = state.deliveryMode,
-                        label = { it.label },
+                        label = { stringResource(it.labelRes) },
                         onSelect = { onIntent(CheckoutIntent.DeliveryModeSelected(it)) }
                     )
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
                         Icon(BoucheeIcons.Clock, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                         Text(
                             text = if (state.deliveryMode == DeliveryMode.Asap) {
-                                "Livraison dès que la commande est prête"
+                                stringResource(R.string.checkout_delivery_asap_hint)
                             } else {
-                                "Le restaurant vous contactera pour fixer le créneau"
+                                stringResource(R.string.checkout_delivery_scheduled_hint)
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -150,20 +155,20 @@ fun CheckoutScreen(
                     }
                 }
             } else {
-                Section("Votre table") {
+                Section(stringResource(R.string.checkout_your_table)) {
                     AuthTextField(
-                        label = "Numéro de table",
+                        label = stringResource(R.string.common_table_number),
                         value = state.tableNumber,
                         onValueChange = { onIntent(CheckoutIntent.TableNumberChanged(it)) },
-                        placeholder = "Ex. 12",
-                        error = state.tableNumberError,
+                        placeholder = stringResource(R.string.common_table_placeholder),
+                        error = state.tableNumberError?.asString(),
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
                     )
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
                         Icon(BoucheeIcons.Table, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                         Text(
-                            "Le numéro est indiqué sur votre table",
+                            stringResource(R.string.checkout_table_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -171,7 +176,7 @@ fun CheckoutScreen(
                 }
             }
 
-            Section("Moyen de paiement") {
+            Section(stringResource(R.string.checkout_payment_method)) {
                 PaymentMethod.entries.forEach { method ->
                     PaymentOption(
                         method = method,
@@ -185,10 +190,10 @@ fun CheckoutScreen(
 
             PriceSummary(
                 lines = listOfNotNull(
-                    PriceLine("${state.itemCount} article${if (state.itemCount > 1) "s" else ""}", formatPrice(state.subtotalCents)),
-                    if (state.isDelivery) PriceLine("Livraison", formatPrice(state.deliveryCents)) else null
+                    PriceLine(pluralStringResource(R.plurals.common_articles, state.itemCount, state.itemCount), formatPrice(state.subtotalCents)),
+                    if (state.isDelivery) PriceLine(stringResource(R.string.common_delivery), formatPrice(state.deliveryCents)) else null
                 ),
-                totalLabel = "Total",
+                totalLabel = stringResource(R.string.common_total),
                 total = formatPrice(state.totalCents)
             )
         }
@@ -236,15 +241,15 @@ private fun AddressCard(address: String, onEdit: () -> Unit) {
         ) {
             IconTile(BoucheeIcons.Pin, colors.primaryContainer, colors.primary)
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text("Domicile", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.checkout_home), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    address.ifBlank { "Aucune adresse renseignée" },
+                    address.ifBlank { stringResource(R.string.checkout_no_address) },
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.onSurfaceVariant
                 )
             }
             TextButton(onClick = onEdit) {
-                Text(if (address.isBlank()) "Ajouter" else "Modifier", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
+                Text(stringResource(if (address.isBlank()) R.string.common_add else R.string.checkout_edit), style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
             }
         }
     }
@@ -262,15 +267,15 @@ private fun SignInCard(onSignIn: () -> Unit) {
         ) {
             IconTile(BoucheeIcons.User, colors.primaryContainer, colors.primary)
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text("Compte requis", style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.checkout_account_required), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "Connectez-vous pour être livré",
+                    stringResource(R.string.checkout_sign_in_to_deliver),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.onSurfaceVariant
                 )
             }
             TextButton(onClick = onSignIn) {
-                Text("Se connecter", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
+                Text(stringResource(R.string.common_sign_in), style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
             }
         }
     }
@@ -278,7 +283,7 @@ private fun SignInCard(onSignIn: () -> Unit) {
 
 /** Sélecteur segmenté : fond surfaceContainerHigh, option active blanche. */
 @Composable
-private fun <T> SegmentedSelector(options: List<T>, selected: T, label: (T) -> String, onSelect: (T) -> Unit) {
+private fun <T> SegmentedSelector(options: List<T>, selected: T, label: @Composable (T) -> String, onSelect: (T) -> Unit) {
     val colors = MaterialTheme.colorScheme
     Row(
         modifier = Modifier
@@ -327,8 +332,8 @@ private fun PaymentOption(method: PaymentMethod, orderType: OrderType, icon: Ima
         ) {
             IconTile(icon, colors.surfaceContainerHigh, colors.onSurface)
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(method.label, style = MaterialTheme.typography.titleSmall)
-                Text(method.subtitle(orderType), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+                Text(stringResource(method.labelRes), style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(method.subtitleRes(orderType)), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
             }
             // Bouton radio du design : anneau épais quand sélectionné
             Box(
@@ -353,21 +358,21 @@ private fun AddressDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Adresse de livraison", style = MaterialTheme.typography.titleLarge) },
+        title = { Text(stringResource(R.string.checkout_delivery_address), style = MaterialTheme.typography.titleLarge) },
         text = {
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
-                placeholder = { Text("N°, rue, ville") },
+                placeholder = { Text(stringResource(R.string.checkout_address_placeholder)) },
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.fillMaxWidth()
             )
         },
         confirmButton = {
-            TextButton(onClick = onConfirm, enabled = value.isNotBlank()) { Text("Enregistrer") }
+            TextButton(onClick = onConfirm, enabled = value.isNotBlank()) { Text(stringResource(R.string.common_save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Annuler") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainer
     )

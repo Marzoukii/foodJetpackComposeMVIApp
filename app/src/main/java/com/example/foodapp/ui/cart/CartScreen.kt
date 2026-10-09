@@ -21,11 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.foodapp.R
 import com.example.foodapp.domain.model.CartItemModel
 import com.example.foodapp.ui.components.BackTopBar
 import com.example.foodapp.ui.components.EmptyView
@@ -42,6 +44,7 @@ import com.example.foodapp.ui.theme.FoodAppTheme
 import com.example.foodapp.ui.theme.PriceTextStyle
 import com.example.foodapp.ui.theme.Spacing
 import com.example.foodapp.ui.util.formatPrice
+import com.example.foodapp.ui.util.withoutIngredients
 
 @Composable
 fun CartRoute(
@@ -73,13 +76,13 @@ fun CartScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                title = "Mon panier",
+                title = stringResource(R.string.cart_title),
                 onBack = { onIntent(CartIntent.BackClicked) },
                 modifier = Modifier.statusBarsPadding()
             ) {
                 if (state.items.isNotEmpty()) {
                     TextButton(onClick = { onIntent(CartIntent.ClearClicked) }) {
-                        Text("Vider", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.cart_clear), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
                     }
                 }
             }
@@ -88,7 +91,7 @@ fun CartScreen(
             if (state.items.isNotEmpty()) {
                 StickyBottomBar {
                     PrimaryButton(
-                        text = "Passer la commande · ${formatPrice(state.totalCents)}",
+                        text = stringResource(R.string.cart_checkout_with_price, formatPrice(state.totalCents)),
                         onClick = { onIntent(CartIntent.CheckoutClicked) },
                         modifier = Modifier.weight(1f)
                     )
@@ -99,8 +102,8 @@ fun CartScreen(
         when {
             state.isLoading -> LoadingView(Modifier.padding(padding))
             state.items.isEmpty() -> EmptyView(
-                message = "Votre panier est vide",
-                actionLabel = "Voir le menu",
+                message = stringResource(R.string.cart_empty),
+                actionLabel = stringResource(R.string.cart_browse_menu),
                 onAction = { onIntent(CartIntent.BrowseMenuClicked) },
                 modifier = Modifier.padding(padding)
             )
@@ -121,10 +124,10 @@ fun CartScreen(
                 item {
                     PriceSummary(
                         lines = listOfNotNull(
-                            PriceLine("Sous-total", formatPrice(state.subtotalCents)),
-                            if (state.isDelivery) PriceLine("Livraison", formatPrice(state.deliveryCents)) else null
+                            PriceLine(stringResource(R.string.common_subtotal), formatPrice(state.subtotalCents)),
+                            if (state.isDelivery) PriceLine(stringResource(R.string.common_delivery), formatPrice(state.deliveryCents)) else null
                         ),
-                        totalLabel = "Total",
+                        totalLabel = stringResource(R.string.common_total),
                         total = formatPrice(state.totalCents),
                         modifier = Modifier.padding(top = Spacing.s)
                     )
@@ -153,7 +156,7 @@ private fun CartItemRow(item: CartItemModel, onIncrement: () -> Unit, onDecremen
                 Text(item.name, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 if (item.removedIngredients.isNotEmpty()) {
                     Text(
-                        item.removedIngredients.joinToString(", ") { "Sans $it" },
+                        withoutIngredients(item.removedIngredients),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         maxLines = 2,

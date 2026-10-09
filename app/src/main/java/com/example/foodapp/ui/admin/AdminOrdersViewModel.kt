@@ -1,12 +1,14 @@
 package com.example.foodapp.ui.admin
 
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.model.OrderStatus
 import com.example.foodapp.domain.usecase.ObserveAllOrdersUseCase
 import com.example.foodapp.domain.usecase.UpdateOrderStatusUseCase
 import com.example.foodapp.ui.base.MviViewModel
-import com.example.foodapp.ui.util.label
+import com.example.foodapp.ui.util.labelRes
+import com.example.foodapp.ui.util.uiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -43,7 +45,7 @@ class AdminOrdersViewModel @Inject constructor(
             .onStart { setState { copy(isLoading = true, error = null) } }
             .onEach { orders -> setState { copy(isLoading = false, orders = orders) } }
             .catch {
-                setState { copy(isLoading = false, error = "Accès refusé : ce compte n'est pas administrateur") }
+                setState { copy(isLoading = false, error = uiText(R.string.admin_access_denied)) }
             }
             .launchIn(viewModelScope)
     }
@@ -55,9 +57,9 @@ class AdminOrdersViewModel @Inject constructor(
             .onEach { result ->
                 when (result) {
                     is NetworkResult.Success ->
-                        sendEffect(AdminOrdersEffect.ShowMessage("Commande n° $orderNumber : ${status.label(order.orderType)}"))
+                        sendEffect(AdminOrdersEffect.ShowMessage(uiText(R.string.admin_status_changed, orderNumber, uiText(status.labelRes(order.orderType)))))
                     is NetworkResult.Error ->
-                        sendEffect(AdminOrdersEffect.ShowMessage("Impossible de changer le statut"))
+                        sendEffect(AdminOrdersEffect.ShowMessage(uiText(R.string.admin_status_change_failed)))
                 }
             }
             .launchIn(viewModelScope)
