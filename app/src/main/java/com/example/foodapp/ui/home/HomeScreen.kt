@@ -155,7 +155,7 @@ private fun HomeContent(state: HomeState, onIntent: (HomeIntent) -> Unit, modifi
         item {
             CategoriesSection(
                 categories = state.categories,
-                highlighted = state.popularCategory,
+                highlighted = state.selectedCategory,
                 onCategoryClick = { onIntent(HomeIntent.CategoryClicked(it)) },
                 onSeeAll = { onIntent(HomeIntent.SeeAllCategoriesClicked) }
             )
@@ -381,6 +381,7 @@ private fun HomePreview() {
                     CategoryModel("2", "Beef", null, null),
                     CategoryModel("3", "Pasta", null, null)
                 ),
+                selectedCategory = "Chicken",
                 popularCategory = "Chicken",
                 cartCount = 3
             ),
