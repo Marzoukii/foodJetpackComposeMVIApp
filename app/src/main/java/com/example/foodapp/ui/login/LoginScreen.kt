@@ -1,5 +1,7 @@
 package com.example.foodapp.ui.login
 
+import com.example.foodapp.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -94,7 +96,7 @@ fun LoginScreen(
                 .padding(horizontal = Spacing.xxl, vertical = Spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(Spacing.l)
         ) {
-            Text("Bouchée", style = MaterialTheme.typography.titleLarge, color = colors.primary)
+            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleLarge, color = colors.primary)
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.s)) {
                 Text("Content de vous revoir", style = MaterialTheme.typography.displayMedium)
                 Text(
