@@ -12,11 +12,14 @@ import com.example.foodapp.domain.usecase.GetRandomMealUseCase
 import com.example.foodapp.domain.usecase.GetTableNumberUseCase
 import com.example.foodapp.domain.usecase.ObserveIsAdminUseCase
 import com.example.foodapp.domain.usecase.SignOutUseCase
+import com.example.foodapp.domain.usecase.SyncUserProfileUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +33,8 @@ class HomeViewModel @Inject constructor(
     getTableNumberUseCase: GetTableNumberUseCase,
     getAuthStateUseCase: GetAuthStateUseCase,
     observeIsAdminUseCase: ObserveIsAdminUseCase,
-    private val signOutUseCase: SignOutUseCase
+    private val signOutUseCase: SignOutUseCase,
+    private val syncUserProfileUseCase: SyncUserProfileUseCase
 ) : MviViewModel<HomeState, HomeIntent, HomeEffect>(HomeState()) {
 
     init {
@@ -52,6 +56,8 @@ class HomeViewModel @Inject constructor(
 
         getAuthStateUseCase.execute()
             .onEach { user -> setState { copy(user = user) } }
+            .distinctUntilChangedBy { it?.id }
+            .onEach { user -> if (user != null) viewModelScope.launch { syncUserProfileUseCase.execute(user) } }
             .launchIn(viewModelScope)
 
         observeIsAdminUseCase.execute()

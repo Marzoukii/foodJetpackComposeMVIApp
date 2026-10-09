@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +50,7 @@ import java.util.Locale
 
 @Composable
 fun AdminOrdersRoute(
+    onNavigateToTeam: () -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: AdminOrdersViewModel = hiltViewModel()
 ) {
@@ -59,6 +61,7 @@ fun AdminOrdersRoute(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
+                AdminOrdersEffect.NavigateToTeam -> onNavigateToTeam()
                 AdminOrdersEffect.NavigateBack -> onNavigateBack()
                 is AdminOrdersEffect.ShowMessage -> {
                     snackbarHostState.currentSnackbarData?.dismiss()
@@ -80,8 +83,13 @@ fun AdminOrdersScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                title = "Gestion des commandes",
+                title = "Commandes",
                 onBack = { onIntent(AdminOrdersIntent.BackClicked) },
+                action = {
+                    TextButton(onClick = { onIntent(AdminOrdersIntent.TeamClicked) }) {
+                        Text("Équipe", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold))
+                    }
+                },
                 modifier = Modifier.statusBarsPadding()
             )
         },

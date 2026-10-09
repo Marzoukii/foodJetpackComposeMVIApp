@@ -31,6 +31,7 @@ class AdminOrdersViewModel @Inject constructor(
         when (intent) {
             is AdminOrdersIntent.StatusSelected -> updateStatus(intent.orderNumber, intent.status)
             AdminOrdersIntent.Retry -> observeOrders()
+            AdminOrdersIntent.TeamClicked -> sendEffect(AdminOrdersEffect.NavigateToTeam)
             AdminOrdersIntent.BackClicked -> sendEffect(AdminOrdersEffect.NavigateBack)
         }
     }
