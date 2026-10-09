@@ -16,7 +16,9 @@ data class HomeState(
     val categories: List<CategoryModel> = emptyList(),
     /** Plat du jour (random.php). */
     val mealOfTheDay: MealModel? = null,
-    /** Plats de la première catégorie, affichés en « Populaires ». */
+    /** Catégorie entourée : la première au démarrage, puis celle que l'utilisateur touche. */
+    val selectedCategory: String? = null,
+    /** Catégorie des plats affichés en « Populaires » (rejoint selectedCategory une fois chargée). */
     val popularCategory: String? = null,
     val popularMeals: List<MealItemModel> = emptyList(),
     val cartCount: Int = 0,

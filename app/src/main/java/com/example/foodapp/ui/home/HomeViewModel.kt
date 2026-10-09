@@ -17,6 +17,7 @@ import com.example.foodapp.domain.usecase.SyncUserProfileUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import com.example.foodapp.ui.util.toUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,6 +39,8 @@ class HomeViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val syncUserProfileUseCase: SyncUserProfileUseCase
 ) : MviViewModel<HomeState, HomeIntent, HomeEffect>(HomeState()) {
+
+    private var popularJob: Job? = null
 
     init {
         getCartItemsUseCase.execute()
@@ -72,7 +75,7 @@ class HomeViewModel @Inject constructor(
     override fun onIntent(intent: HomeIntent) {
         when (intent) {
             HomeIntent.Load -> load()
-            is HomeIntent.CategoryClicked -> sendEffect(HomeEffect.NavigateToMenu(intent.categoryName))
+            is HomeIntent.CategoryClicked -> selectCategory(intent.categoryName)
             HomeIntent.SeeAllCategoriesClicked -> sendEffect(HomeEffect.NavigateToMenu(null))
             is HomeIntent.MealClicked -> sendEffect(HomeEffect.NavigateToMealDetails(intent.mealId))
             HomeIntent.SearchClicked -> sendEffect(HomeEffect.NavigateToSearch)
@@ -100,7 +103,7 @@ class HomeViewModel @Inject constructor(
                     is NetworkResult.Success -> {
                         val categories = result.data?.categories.orEmpty()
                         setState { copy(isLoading = false, categories = categories) }
-                        categories.firstOrNull()?.name?.let { loadPopular(it) }
+                        categories.firstOrNull()?.name?.let { selectCategory(it) }
                     }
                     is NetworkResult.Error -> setState {
                         copy(isLoading = false, error = result.exception.toUiText(R.string.common_unknown_error))
@@ -118,8 +121,17 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    /** Entoure la catégorie tout de suite, puis charge ses plats dans « Populaires ». */
+    private fun selectCategory(categoryName: String) {
+        if (categoryName == currentState.selectedCategory) return
+        setState { copy(selectedCategory = categoryName) }
+        loadPopular(categoryName)
+    }
+
     private fun loadPopular(categoryName: String) {
-        getMealsByCategoryUseCase.execute(categoryName)
+        // Un tap rapide sur une autre catégorie annule le chargement précédent.
+        popularJob?.cancel()
+        popularJob = getMealsByCategoryUseCase.execute(categoryName)
             .onEach { result ->
                 if (result is NetworkResult.Success) {
                     setState {

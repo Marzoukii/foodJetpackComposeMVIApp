@@ -183,6 +183,13 @@ private fun NavHostController.navigateClearingBackStack(route: String) {
 
 /** Navigation de la barre du bas : une seule instance par onglet, l'accueil reste à la base. */
 private fun NavHostController.navigateToTab(tab: BottomTab) {
+    if (tab == BottomTab.Home) {
+        // L'accueil est la base de la pile : on y revient simplement. Avec saveState/restoreState,
+        // l'onglet quitté serait sauvegardé sous l'accueil puis aussitôt restauré (le clic semblerait sans effet).
+        if (currentDestination?.route == Routes.HOME) return
+        if (!popBackStack(Routes.HOME, inclusive = false)) navigateClearingBackStack(Routes.HOME)
+        return
+    }
     val route = when (tab) {
         BottomTab.Home -> Routes.HOME
         BottomTab.Menu -> Routes.menu()
