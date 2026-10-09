@@ -120,9 +120,9 @@ fun CartScreen(
                 }
                 item {
                     PriceSummary(
-                        lines = listOf(
+                        lines = listOfNotNull(
                             PriceLine("Sous-total", formatPrice(state.subtotalCents)),
-                            PriceLine("Livraison", formatPrice(state.deliveryCents))
+                            if (state.isDelivery) PriceLine("Livraison", formatPrice(state.deliveryCents)) else null
                         ),
                         totalLabel = "Total",
                         total = formatPrice(state.totalCents),

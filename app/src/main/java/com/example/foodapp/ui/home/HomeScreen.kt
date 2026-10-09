@@ -2,6 +2,7 @@ package com.example.foodapp.ui.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,6 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.domain.model.CategoryModel
 import com.example.foodapp.domain.model.MealModel
+import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.domain.model.UserModel
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.components.BottomTab
@@ -60,7 +62,7 @@ import com.example.foodapp.ui.util.formatPrice
 
 @Composable
 fun HomeRoute(
-    onNavigateToLogin: () -> Unit,
+    onNavigateToOrderMode: (clearBackStack: Boolean) -> Unit,
     onNavigateToMenu: (String?) -> Unit,
     onNavigateToMealDetails: (String) -> Unit,
     onNavigateToSearch: () -> Unit,
@@ -78,7 +80,7 @@ fun HomeRoute(
                 is HomeEffect.NavigateToMealDetails -> onNavigateToMealDetails(effect.mealId)
                 HomeEffect.NavigateToSearch -> onNavigateToSearch()
                 HomeEffect.NavigateToCart -> onNavigateToCart()
-                HomeEffect.NavigateToLogin -> onNavigateToLogin()
+                is HomeEffect.NavigateToOrderMode -> onNavigateToOrderMode(effect.clearBackStack)
                 HomeEffect.NavigateToAdminOrders -> onNavigateToAdminOrders()
             }
         }
@@ -127,7 +129,10 @@ private fun HomeContent(state: HomeState, onIntent: (HomeIntent) -> Unit, modifi
     ) {
         item {
             HomeHeader(
+                orderType = state.orderType,
                 address = state.deliveryAddress,
+                tableNumber = state.tableNumber,
+                onModeClick = { onIntent(HomeIntent.ChangeOrderModeClicked) },
                 cartCount = state.cartCount,
                 onAccountClick = { onIntent(HomeIntent.AccountClicked) },
                 onCartClick = { onIntent(HomeIntent.CartClicked) }
@@ -176,14 +181,42 @@ private fun HomeContent(state: HomeState, onIntent: (HomeIntent) -> Unit, modifi
 }
 
 @Composable
-private fun HomeHeader(address: String, cartCount: Int, onAccountClick: () -> Unit, onCartClick: () -> Unit) {
+private fun HomeHeader(
+    orderType: OrderType,
+    address: String,
+    tableNumber: Int?,
+    onModeClick: () -> Unit,
+    cartCount: Int,
+    onAccountClick: () -> Unit,
+    onCartClick: () -> Unit
+) {
+    val isDineIn = orderType == OrderType.DINE_IN
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text("Livrer à", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        // Toucher le mode ramène à l'écran de démarrage pour en changer.
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onModeClick),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                if (isDineIn) "Sur place · changer" else "Livrer à · changer",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Icon(BoucheeIcons.Pin, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                Icon(
+                    if (isDineIn) BoucheeIcons.Table else BoucheeIcons.Pin,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                )
                 Text(
-                    text = address.ifBlank { "Ajoutez une adresse au paiement" },
+                    text = if (isDineIn) {
+                        tableNumber?.let { "Table n° $it" } ?: "Table à indiquer au paiement"
+                    } else {
+                        address.ifBlank { "Ajoutez une adresse au paiement" }
+                    },
                     style = MaterialTheme.typography.titleSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -210,11 +243,18 @@ private fun AccountDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(BoucheeIcons.User, contentDescription = null, tint = colors.primary) },
-        title = { Text(user?.name?.takeIf { it.isNotBlank() } ?: "Mon compte") },
+        title = {
+            Text(
+                when {
+                    user?.isAnonymous == true -> "Invité"
+                    else -> user?.name?.takeIf { it.isNotBlank() } ?: "Mon compte"
+                }
+            )
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.m)) {
                 Text(
-                    user?.email.orEmpty(),
+                    if (user?.isAnonymous == true) "Commande sur place, sans compte" else user?.email.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = colors.onSurfaceVariant
                 )

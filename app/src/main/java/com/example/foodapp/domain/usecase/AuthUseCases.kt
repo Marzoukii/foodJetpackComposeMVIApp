@@ -53,6 +53,16 @@ class SignInWithGoogleUseCase @Inject constructor(
     }
 }
 
+class SignInAsGuestUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
+    fun execute(): Flow<NetworkResult<UserModel?>> = flow {
+        authRepository.signInAnonymously().collect {
+            emit(it)
+        }
+    }
+}
+
 class SendPasswordResetUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {

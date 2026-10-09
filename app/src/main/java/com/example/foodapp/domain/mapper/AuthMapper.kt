@@ -12,7 +12,8 @@ class AuthMapper @Inject constructor() {
             id = user.uid,
             name = user.displayName,
             email = user.email,
-            photoUrl = user.photoUrl?.toString()
+            photoUrl = user.photoUrl?.toString(),
+            isAnonymous = user.isAnonymous
         )
     }
 }

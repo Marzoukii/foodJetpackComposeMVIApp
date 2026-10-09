@@ -5,6 +5,7 @@ import com.example.foodapp.domain.mapper.OrderMapper
 import com.example.foodapp.domain.model.CartItemModel
 import com.example.foodapp.domain.model.OrderModel
 import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.model.OrderType
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseException
@@ -39,7 +40,9 @@ class OrderRepository @Inject constructor(
     fun createOrder(
         userId: String,
         items: List<CartItemModel>,
+        orderType: OrderType,
         address: String,
+        tableNumber: Int?,
         deliveryMode: String,
         paymentMethod: String,
         subtotalCents: Int,
@@ -50,7 +53,9 @@ class OrderRepository @Inject constructor(
             "status" to OrderStatus.RECEIVED.name,
             "createdAt" to ServerValue.TIMESTAMP,
             "statusHistory" to mapOf(OrderStatus.RECEIVED.name to ServerValue.TIMESTAMP),
+            "orderType" to orderType.name,
             "address" to address,
+            "tableNumber" to tableNumber,
             "deliveryMode" to deliveryMode,
             "paymentMethod" to paymentMethod,
             "subtotalCents" to subtotalCents,

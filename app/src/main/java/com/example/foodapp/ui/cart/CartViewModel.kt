@@ -3,6 +3,7 @@ package com.example.foodapp.ui.cart
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.domain.usecase.ClearCartUseCase
 import com.example.foodapp.domain.usecase.GetCartItemsUseCase
+import com.example.foodapp.domain.usecase.GetOrderTypeUseCase
 import com.example.foodapp.domain.usecase.UpdateCartQuantityUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     getCartItemsUseCase: GetCartItemsUseCase,
+    getOrderTypeUseCase: GetOrderTypeUseCase,
     private val updateCartQuantityUseCase: UpdateCartQuantityUseCase,
     private val clearCartUseCase: ClearCartUseCase
 ) : MviViewModel<CartState, CartIntent, CartEffect>(CartState()) {
@@ -21,6 +23,10 @@ class CartViewModel @Inject constructor(
     init {
         getCartItemsUseCase.execute()
             .onEach { items -> setState { copy(isLoading = false, items = items) } }
+            .launchIn(viewModelScope)
+
+        getOrderTypeUseCase.execute()
+            .onEach { type -> setState { copy(orderType = type) } }
             .launchIn(viewModelScope)
     }
 

@@ -2,6 +2,7 @@ package com.example.foodapp.domain.mapper
 
 import com.example.foodapp.domain.model.OrderModel
 import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.model.OrderType
 import com.google.firebase.database.DataSnapshot
 import javax.inject.Inject
 
@@ -16,7 +17,9 @@ class OrderMapper @Inject constructor() {
             statusHistory = snapshot.child("statusHistory").children.associate {
                 OrderStatus.from(it.key) to (it.getValue(Long::class.java) ?: 0L)
             },
+            orderType = OrderType.from(snapshot.child("orderType").getValue(String::class.java)),
             address = snapshot.child("address").getValue(String::class.java).orEmpty(),
+            tableNumber = snapshot.child("tableNumber").getValue(Int::class.java),
             itemCount = snapshot.child("items").children.sumOf {
                 it.child("quantity").getValue(Int::class.java) ?: 0
             },

@@ -11,6 +11,6 @@ sealed interface OnboardingIntent {
 }
 
 sealed interface OnboardingEffect {
-    data object NavigateToRegister : OnboardingEffect
+    data object NavigateToOrderMode : OnboardingEffect
     data object NavigateToLogin : OnboardingEffect
 }

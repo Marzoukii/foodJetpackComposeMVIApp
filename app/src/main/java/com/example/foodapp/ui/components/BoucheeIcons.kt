@@ -26,6 +26,7 @@ object BoucheeIcons {
     val Eye = strokeIcon("Eye", "M2 12s3.5 -7 10 -7s10 7 10 7s-3.5 7 -10 7S2 12 2 12z", "M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0")
     val EyeOff = strokeIcon("EyeOff", "M2 12s3.5 -7 10 -7s10 7 10 7s-3.5 7 -10 7S2 12 2 12z", "M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "M4 4l16 16")
     val Logout = strokeIcon("Logout", "M14 4h5v16h-5", "M9 8l-4 4 4 4", "M5 12h10")
+    val Table = strokeIcon("Table", "M3 8h18", "M6 8v11", "M18 8v11", "M6 13h12")
 
     private fun strokeIcon(name: String, vararg paths: String): ImageVector =
         ImageVector.Builder(

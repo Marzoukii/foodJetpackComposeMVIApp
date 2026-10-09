@@ -8,9 +8,15 @@
       ".indexOn": ["createdAt"],
       "$orderId": {
         ".read": "auth != null && (data.child('userId').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
-        ".write": "auth != null && ((!data.exists() && newData.child('userId').val() === auth.uid && newData.child('status').val() === 'RECEIVED') || (data.exists() && root.child('admins').child(auth.uid).val() === true))",
+        ".write": "auth != null && ((!data.exists() && newData.child('userId').val() === auth.uid && newData.child('status').val() === 'RECEIVED' && (newData.child('orderType').val() === 'DINE_IN' || auth.provider !== 'anonymous')) || (data.exists() && root.child('admins').child(auth.uid).val() === true))",
         "status": {
           ".validate": "newData.val() === 'RECEIVED' || newData.val() === 'PREPARING' || newData.val() === 'ON_THE_WAY' || newData.val() === 'DELIVERED'"
+        },
+        "orderType": {
+          ".validate": "newData.val() === 'DELIVERY' || newData.val() === 'DINE_IN'"
+        },
+        "tableNumber": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 999"
         }
       }
     },

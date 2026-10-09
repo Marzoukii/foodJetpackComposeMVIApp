@@ -25,7 +25,9 @@ class ConfirmationViewModel @Inject constructor(
         if (currentState.orderNumber.isNotEmpty()) {
             observeOrderUseCase.execute(currentState.orderNumber)
                 .filterNotNull()
-                .onEach { order -> setState { copy(orderStatus = order.status) } }
+                .onEach { order ->
+                    setState { copy(orderStatus = order.status, orderType = order.orderType, tableNumber = order.tableNumber) }
+                }
                 .catch { /* Lecture refusée ou coupée : on garde le dernier statut affiché. */ }
                 .launchIn(viewModelScope)
         }

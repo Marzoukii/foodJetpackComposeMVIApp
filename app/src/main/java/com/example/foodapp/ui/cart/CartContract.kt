@@ -1,14 +1,17 @@
 package com.example.foodapp.ui.cart
 
 import com.example.foodapp.domain.model.CartItemModel
+import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.domain.pricing.MealPricing
 
 data class CartState(
     val isLoading: Boolean = true,
-    val items: List<CartItemModel> = emptyList()
+    val items: List<CartItemModel> = emptyList(),
+    val orderType: OrderType = OrderType.DELIVERY
 ) {
     val subtotalCents: Int get() = items.sumOf { it.lineTotalCents }
-    val deliveryCents: Int get() = MealPricing.DELIVERY_FEE_CENTS
+    val isDelivery: Boolean get() = orderType == OrderType.DELIVERY
+    val deliveryCents: Int get() = if (isDelivery) MealPricing.DELIVERY_FEE_CENTS else 0
     val totalCents: Int get() = subtotalCents + deliveryCents
 }
 

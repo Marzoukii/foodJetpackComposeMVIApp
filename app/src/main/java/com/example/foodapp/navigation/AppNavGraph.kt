@@ -18,6 +18,7 @@ import com.example.foodapp.ui.home.HomeRoute
 import com.example.foodapp.ui.login.LoginRoute
 import com.example.foodapp.ui.menu.MenuRoute
 import com.example.foodapp.ui.onboarding.OnboardingRoute
+import com.example.foodapp.ui.ordermode.OrderModeRoute
 import com.example.foodapp.ui.register.RegisterRoute
 import com.example.foodapp.ui.search.SearchRoute
 
@@ -33,8 +34,8 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
     ) {
         composable(Routes.ONBOARDING) {
             OnboardingRoute(
-                onNavigateToRegister = {
-                    navController.navigate(Routes.REGISTER) {
+                onNavigateToOrderMode = {
+                    navController.navigate(Routes.ORDER_MODE) {
                         popUpTo(Routes.ONBOARDING) { inclusive = true }
                     }
                 },
@@ -43,6 +44,15 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
                         popUpTo(Routes.ONBOARDING) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        // Démarrage : sur place (sans compte) ou livraison (connexion imposée).
+        composable(Routes.ORDER_MODE) {
+            OrderModeRoute(
+                onNavigateToHome = { navController.navigateClearingBackStack(Routes.HOME) },
+                // L'écran de choix reste dessous : retour = changer de mode.
+                onNavigateToLogin = { navController.navigate(Routes.LOGIN) }
             )
         }
 
@@ -70,7 +80,13 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
 
         composable(Routes.HOME) {
             HomeRoute(
-                onNavigateToLogin = { navController.navigateClearingBackStack(Routes.LOGIN) },
+                onNavigateToOrderMode = { clearBackStack ->
+                    if (clearBackStack) {
+                        navController.navigateClearingBackStack(Routes.ORDER_MODE)
+                    } else {
+                        navController.navigate(Routes.ORDER_MODE)
+                    }
+                },
                 onNavigateToMenu = { navController.navigate(Routes.menu(it)) },
                 onNavigateToMealDetails = { navController.navigate(Routes.mealDetails(it)) },
                 onNavigateToSearch = { navController.navigate(Routes.SEARCH) },
@@ -133,6 +149,7 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
                         popUpTo(Routes.HOME)
                     }
                 },
+                onNavigateToLogin = { navController.navigate(Routes.LOGIN) },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

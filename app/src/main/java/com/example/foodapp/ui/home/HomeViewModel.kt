@@ -7,7 +7,9 @@ import com.example.foodapp.domain.usecase.GetCartItemsUseCase
 import com.example.foodapp.domain.usecase.GetCategoriesUseCase
 import com.example.foodapp.domain.usecase.GetDeliveryAddressUseCase
 import com.example.foodapp.domain.usecase.GetMealsByCategoryUseCase
+import com.example.foodapp.domain.usecase.GetOrderTypeUseCase
 import com.example.foodapp.domain.usecase.GetRandomMealUseCase
+import com.example.foodapp.domain.usecase.GetTableNumberUseCase
 import com.example.foodapp.domain.usecase.ObserveIsAdminUseCase
 import com.example.foodapp.domain.usecase.SignOutUseCase
 import com.example.foodapp.ui.base.MviViewModel
@@ -24,6 +26,8 @@ class HomeViewModel @Inject constructor(
     private val getMealsByCategoryUseCase: GetMealsByCategoryUseCase,
     getCartItemsUseCase: GetCartItemsUseCase,
     getDeliveryAddressUseCase: GetDeliveryAddressUseCase,
+    getOrderTypeUseCase: GetOrderTypeUseCase,
+    getTableNumberUseCase: GetTableNumberUseCase,
     getAuthStateUseCase: GetAuthStateUseCase,
     observeIsAdminUseCase: ObserveIsAdminUseCase,
     private val signOutUseCase: SignOutUseCase
@@ -36,6 +40,14 @@ class HomeViewModel @Inject constructor(
 
         getDeliveryAddressUseCase.execute()
             .onEach { address -> setState { copy(deliveryAddress = address) } }
+            .launchIn(viewModelScope)
+
+        getOrderTypeUseCase.execute()
+            .onEach { type -> setState { copy(orderType = type) } }
+            .launchIn(viewModelScope)
+
+        getTableNumberUseCase.execute()
+            .onEach { number -> setState { copy(tableNumber = number) } }
             .launchIn(viewModelScope)
 
         getAuthStateUseCase.execute()
@@ -62,8 +74,9 @@ class HomeViewModel @Inject constructor(
             HomeIntent.SignOutClicked -> {
                 setState { copy(isAccountDialogVisible = false) }
                 signOutUseCase.execute()
-                sendEffect(HomeEffect.NavigateToLogin)
+                sendEffect(HomeEffect.NavigateToOrderMode(clearBackStack = true))
             }
+            HomeIntent.ChangeOrderModeClicked -> sendEffect(HomeEffect.NavigateToOrderMode(clearBackStack = false))
             HomeIntent.AdminOrdersClicked -> {
                 setState { copy(isAccountDialogVisible = false) }
                 sendEffect(HomeEffect.NavigateToAdminOrders)

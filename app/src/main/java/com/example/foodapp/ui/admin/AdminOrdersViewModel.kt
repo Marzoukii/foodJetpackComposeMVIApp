@@ -54,7 +54,7 @@ class AdminOrdersViewModel @Inject constructor(
             .onEach { result ->
                 when (result) {
                     is NetworkResult.Success ->
-                        sendEffect(AdminOrdersEffect.ShowMessage("Commande n° $orderNumber : ${status.label}"))
+                        sendEffect(AdminOrdersEffect.ShowMessage("Commande n° $orderNumber : ${status.label(order.orderType)}"))
                     is NetworkResult.Error ->
                         sendEffect(AdminOrdersEffect.ShowMessage("Impossible de changer le statut"))
                 }

@@ -30,7 +30,7 @@ class OnboardingViewModel @Inject constructor(
         when (intent) {
             OnboardingIntent.StartClicked -> {
                 completeOnboardingUseCase.execute()
-                sendEffect(OnboardingEffect.NavigateToRegister)
+                sendEffect(OnboardingEffect.NavigateToOrderMode)
             }
             OnboardingIntent.AlreadyHaveAccountClicked -> {
                 completeOnboardingUseCase.execute()

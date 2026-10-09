@@ -3,12 +3,15 @@ package com.example.foodapp.ui.home
 import com.example.foodapp.domain.model.CategoryModel
 import com.example.foodapp.domain.model.MealItemModel
 import com.example.foodapp.domain.model.MealModel
+import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.domain.model.UserModel
 
 data class HomeState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val deliveryAddress: String = "",
+    val orderType: OrderType = OrderType.DELIVERY,
+    val tableNumber: Int? = null,
     val categories: List<CategoryModel> = emptyList(),
     /** Plat du jour (random.php). */
     val mealOfTheDay: MealModel? = null,
@@ -32,6 +35,7 @@ sealed interface HomeIntent {
     data object AccountClicked : HomeIntent
     data object DismissAccountDialog : HomeIntent
     data object SignOutClicked : HomeIntent
+    data object ChangeOrderModeClicked : HomeIntent
     data object AdminOrdersClicked : HomeIntent
 }
 
@@ -40,6 +44,7 @@ sealed interface HomeEffect {
     data class NavigateToMealDetails(val mealId: String) : HomeEffect
     data object NavigateToSearch : HomeEffect
     data object NavigateToCart : HomeEffect
-    data object NavigateToLogin : HomeEffect
+    /** Écran de démarrage : changement de mode (retour possible) ou déconnexion (pile vidée). */
+    data class NavigateToOrderMode(val clearBackStack: Boolean) : HomeEffect
     data object NavigateToAdminOrders : HomeEffect
 }

@@ -30,6 +30,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.domain.model.OrderModel
 import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.model.OrderType
 import com.example.foodapp.ui.components.BackTopBar
 import com.example.foodapp.ui.components.CategoryChip
 import com.example.foodapp.ui.components.EmptyView
@@ -125,9 +126,16 @@ private fun AdminOrderCard(order: OrderModel, onStatusSelected: (OrderStatus) ->
                 )
                 Text(formatOrderDate(order.createdAt), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
             }
-            if (order.address.isNotBlank()) {
-                Text(order.address, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+            val destination = if (order.orderType == OrderType.DINE_IN) {
+                order.tableNumber?.let { "Table n° $it" }
+            } else {
+                order.address.takeIf { it.isNotBlank() }
             }
+            Text(
+                listOfNotNull(order.orderType.label, destination).joinToString(" · "),
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.onSurfaceVariant
+            )
             Text(
                 "${order.itemCount} article${if (order.itemCount > 1) "s" else ""} · ${formatPrice(order.totalCents)}",
                 style = MaterialTheme.typography.bodyMedium
@@ -138,9 +146,9 @@ private fun AdminOrderCard(order: OrderModel, onStatusSelected: (OrderStatus) ->
                     .padding(top = Spacing.xs),
                 horizontalArrangement = Arrangement.spacedBy(Spacing.s)
             ) {
-                OrderStatus.entries.forEach { status ->
+                order.orderType.statuses.forEach { status ->
                     CategoryChip(
-                        label = status.label,
+                        label = status.label(order.orderType),
                         selected = status == order.status,
                         onClick = { onStatusSelected(status) }
                     )
@@ -161,13 +169,16 @@ private fun AdminOrdersPreview() {
         status = OrderStatus.PREPARING,
         createdAt = 1_760_000_000_000,
         statusHistory = emptyMap(),
+        orderType = OrderType.DELIVERY,
         address = "12 rue de la Paix, Paris",
+        tableNumber = null,
         itemCount = 3,
         totalCents = 2450
     )
+    val dineIn = order.copy(orderNumber = "482913", status = OrderStatus.RECEIVED, orderType = OrderType.DINE_IN, address = "", tableNumber = 7)
     FoodAppTheme {
         AdminOrdersScreen(
-            state = AdminOrdersState(isLoading = false, orders = listOf(order, order.copy(orderNumber = "482913", status = OrderStatus.RECEIVED))),
+            state = AdminOrdersState(isLoading = false, orders = listOf(order, dineIn)),
             snackbarHostState = remember { SnackbarHostState() },
             onIntent = {}
         )

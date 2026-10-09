@@ -62,6 +62,16 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    /** Session invitée, pour commander sur place sans créer de compte. */
+    fun signInAnonymously(): Flow<NetworkResult<UserModel?>> = flow {
+        try {
+            val result = firebaseAuth.signInAnonymously().await()
+            emit(NetworkResult.Success(authMapper.mapUser(result.user)))
+        } catch (e: Exception) {
+            emit(NetworkResult.Error(e))
+        }
+    }
+
     fun sendPasswordReset(email: String): Flow<NetworkResult<Unit?>> = flow {
         try {
             firebaseAuth.sendPasswordResetEmail(email.trim()).await()

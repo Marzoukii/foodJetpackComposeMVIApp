@@ -3,20 +3,28 @@ package com.example.foodapp.ui.checkout
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.data.NetworkResult
+import com.example.foodapp.domain.usecase.AuthenticationRequiredException
+import com.example.foodapp.domain.usecase.GetAuthStateUseCase
 import com.example.foodapp.domain.usecase.GetCartItemsUseCase
 import com.example.foodapp.domain.usecase.GetDeliveryAddressUseCase
+import com.example.foodapp.domain.usecase.GetOrderTypeUseCase
+import com.example.foodapp.domain.usecase.GetTableNumberUseCase
 import com.example.foodapp.domain.usecase.PlaceOrderUseCase
 import com.example.foodapp.domain.usecase.SaveDeliveryAddressUseCase
 import com.example.foodapp.ui.base.MviViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
     getCartItemsUseCase: GetCartItemsUseCase,
     getDeliveryAddressUseCase: GetDeliveryAddressUseCase,
+    getAuthStateUseCase: GetAuthStateUseCase,
+    getOrderTypeUseCase: GetOrderTypeUseCase,
+    getTableNumberUseCase: GetTableNumberUseCase,
     private val saveDeliveryAddressUseCase: SaveDeliveryAddressUseCase,
     private val placeOrderUseCase: PlaceOrderUseCase
 ) : MviViewModel<CheckoutState, CheckoutIntent, CheckoutEffect>(CheckoutState()) {
@@ -39,6 +47,20 @@ class CheckoutViewModel @Inject constructor(
         getDeliveryAddressUseCase.execute()
             .onEach { address -> setState { copy(address = address) } }
             .launchIn(viewModelScope)
+
+        getOrderTypeUseCase.execute()
+            .onEach { type -> setState { copy(orderType = type) } }
+            .launchIn(viewModelScope)
+
+        // Table donnée au démarrage, modifiable ici avant de payer.
+        getTableNumberUseCase.execute()
+            .take(1)
+            .onEach { number -> setState { copy(tableNumber = number?.toString().orEmpty()) } }
+            .launchIn(viewModelScope)
+
+        getAuthStateUseCase.execute()
+            .onEach { user -> setState { copy(isGuest = user == null || user.isAnonymous) } }
+            .launchIn(viewModelScope)
     }
 
     override fun onIntent(intent: CheckoutIntent) {
@@ -50,8 +72,13 @@ class CheckoutViewModel @Inject constructor(
                 setState { copy(isEditingAddress = false) }
             }
             CheckoutIntent.DismissAddress -> setState { copy(isEditingAddress = false) }
+            is CheckoutIntent.TableNumberChanged -> {
+                val digits = intent.value.filter { it.isDigit() }.take(TABLE_NUMBER_MAX_DIGITS)
+                setState { copy(tableNumber = digits, tableNumberError = null) }
+            }
             is CheckoutIntent.DeliveryModeSelected -> setState { copy(deliveryMode = intent.mode) }
             is CheckoutIntent.PaymentMethodSelected -> setState { copy(paymentMethod = intent.method) }
+            CheckoutIntent.SignInClicked -> sendEffect(CheckoutEffect.NavigateToLogin)
             CheckoutIntent.PayClicked -> placeOrder()
             CheckoutIntent.BackClicked -> sendEffect(CheckoutEffect.NavigateBack)
         }
@@ -59,17 +86,22 @@ class CheckoutViewModel @Inject constructor(
 
     private fun placeOrder() {
         val state = currentState
+        val tableNumber = state.tableNumber.toIntOrNull()?.takeIf { it > 0 }
         when {
             state.isPlacingOrder -> return
             state.itemCount == 0 -> sendEffect(CheckoutEffect.ShowMessage("Votre panier est vide"))
-            state.address.isBlank() -> {
+            state.isDelivery && state.isGuest -> sendEffect(CheckoutEffect.NavigateToLogin)
+            state.isDelivery && state.address.isBlank() -> {
                 sendEffect(CheckoutEffect.ShowMessage("Ajoutez une adresse de livraison"))
                 setState { copy(isEditingAddress = true, addressDraft = address) }
             }
+            !state.isDelivery && tableNumber == null -> setState { copy(tableNumberError = "Saisissez votre numéro de table") }
             else -> {
                 setState { copy(isPlacingOrder = true) }
                 placeOrderUseCase.execute(
+                    orderType = state.orderType,
                     address = state.address,
+                    tableNumber = tableNumber,
                     deliveryMode = state.deliveryMode.name,
                     paymentMethod = state.paymentMethod.name,
                     deliveryCents = state.deliveryCents
@@ -78,9 +110,13 @@ class CheckoutViewModel @Inject constructor(
                         when (result) {
                             is NetworkResult.Success -> sendEffect(CheckoutEffect.NavigateToConfirmation(result.data.orEmpty()))
                             is NetworkResult.Error -> {
-                                Log.w(TAG, "Échec de l'envoi de la commande", result.exception)
                                 setState { copy(isPlacingOrder = false) }
-                                sendEffect(CheckoutEffect.ShowMessage("Impossible d'envoyer la commande, vérifiez votre connexion"))
+                                if (result.exception is AuthenticationRequiredException) {
+                                    sendEffect(CheckoutEffect.NavigateToLogin)
+                                } else {
+                                    Log.w(TAG, "Échec de l'envoi de la commande", result.exception)
+                                    sendEffect(CheckoutEffect.ShowMessage("Impossible d'envoyer la commande, vérifiez votre connexion"))
+                                }
                             }
                         }
                     }
@@ -91,5 +127,6 @@ class CheckoutViewModel @Inject constructor(
 
     private companion object {
         const val TAG = "Checkout"
+        const val TABLE_NUMBER_MAX_DIGITS = 3
     }
 }

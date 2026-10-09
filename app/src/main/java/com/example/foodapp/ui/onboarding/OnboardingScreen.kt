@@ -40,7 +40,7 @@ import com.example.foodapp.ui.theme.Spacing
 
 @Composable
 fun OnboardingRoute(
-    onNavigateToRegister: () -> Unit,
+    onNavigateToOrderMode: () -> Unit,
     onNavigateToLogin: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
@@ -49,7 +49,7 @@ fun OnboardingRoute(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                OnboardingEffect.NavigateToRegister -> onNavigateToRegister()
+                OnboardingEffect.NavigateToOrderMode -> onNavigateToOrderMode()
                 OnboardingEffect.NavigateToLogin -> onNavigateToLogin()
             }
         }
