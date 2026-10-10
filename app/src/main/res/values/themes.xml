@@ -3,9 +3,9 @@
 
     <style name="Theme.FoodApp" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <!-- Splash screen : fond rouge de la marque + cloche blanche, puis le thème de l'appli. -->
+    <!-- Splash screen : fond clair de l'appli + logo Restou rouge au centre, puis le thème de l'appli. -->
     <style name="Theme.FoodApp.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/brand_primary</item>
+        <item name="windowSplashScreenBackground">@color/app_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.FoodApp</item>
     </style>
