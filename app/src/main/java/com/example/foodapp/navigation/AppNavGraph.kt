@@ -21,6 +21,7 @@ import com.example.foodapp.ui.menu.MenuRoute
 import com.example.foodapp.ui.ordermode.OrderModeRoute
 import com.example.foodapp.ui.register.RegisterRoute
 import com.example.foodapp.ui.search.SearchRoute
+import com.example.foodapp.ui.splash.SplashRoute
 
 @Composable
 fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
@@ -32,6 +33,10 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
         startDestination = startDestination,
         modifier = modifier
     ) {
+        composable(Routes.SPLASH) {
+            SplashRoute(onFinished = { navController.navigateClearingBackStack(Routes.ORDER_MODE) })
+        }
+
         // Démarrage : sur place (sans compte) ou livraison (connexion imposée).
         composable(Routes.ORDER_MODE) {
             OrderModeRoute(
