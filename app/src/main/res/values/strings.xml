@@ -45,12 +45,6 @@
     <string name="tab_menu">Menu</string>
     <string name="tab_cart">Panier</string>
 
-    <!-- Onboarding -->
-    <string name="onboarding_title">Les plats du monde, livrés chez vous.</string>
-    <string name="onboarding_subtitle">Parcourez les recettes par catégorie, composez votre panier et commandez en quelques touches.</string>
-    <string name="onboarding_start">Commencer</string>
-    <string name="onboarding_have_account">J\'ai déjà un compte</string>
-
     <!-- Mode de commande -->
     <string name="order_mode_title">Comment souhaitez-vous commander ?</string>
     <string name="order_mode_subtitle">Au restaurant, indiquez simplement votre table. Pour la livraison, un compte est nécessaire.</string>

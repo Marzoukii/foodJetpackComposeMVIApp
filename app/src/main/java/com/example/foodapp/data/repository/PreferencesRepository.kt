@@ -10,12 +10,6 @@ class PreferencesRepository @Inject constructor(
     private val appPreferences: AppPreferences
 ) {
 
-    fun isOnboardingCompleted(): Boolean = appPreferences.onboardingCompleted
-
-    fun completeOnboarding() {
-        appPreferences.onboardingCompleted = true
-    }
-
     fun getDeliveryAddress(): Flow<String> = appPreferences.deliveryAddress
 
     fun saveDeliveryAddress(address: String) {

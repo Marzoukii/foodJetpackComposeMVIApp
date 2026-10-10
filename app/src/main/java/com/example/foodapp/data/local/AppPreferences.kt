@@ -15,10 +15,6 @@ class AppPreferences @Inject constructor(
 ) {
     private val prefs = context.getSharedPreferences("food_app_prefs", Context.MODE_PRIVATE)
 
-    var onboardingCompleted: Boolean
-        get() = prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)
-        set(value) = prefs.edit { putBoolean(KEY_ONBOARDING_COMPLETED, value) }
-
     private val _deliveryAddress = MutableStateFlow(prefs.getString(KEY_DELIVERY_ADDRESS, "").orEmpty())
     val deliveryAddress: StateFlow<String> = _deliveryAddress.asStateFlow()
 
@@ -45,7 +41,6 @@ class AppPreferences @Inject constructor(
     }
 
     private companion object {
-        const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
         const val KEY_DELIVERY_ADDRESS = "delivery_address"
         const val KEY_ORDER_TYPE = "order_type"
         const val KEY_TABLE_NUMBER = "table_number"

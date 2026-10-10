@@ -18,7 +18,6 @@ import com.example.foodapp.ui.details.MealDetailsRoute
 import com.example.foodapp.ui.home.HomeRoute
 import com.example.foodapp.ui.login.LoginRoute
 import com.example.foodapp.ui.menu.MenuRoute
-import com.example.foodapp.ui.onboarding.OnboardingRoute
 import com.example.foodapp.ui.ordermode.OrderModeRoute
 import com.example.foodapp.ui.register.RegisterRoute
 import com.example.foodapp.ui.search.SearchRoute
@@ -33,21 +32,6 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(Routes.ONBOARDING) {
-            OnboardingRoute(
-                onNavigateToOrderMode = {
-                    navController.navigate(Routes.ORDER_MODE) {
-                        popUpTo(Routes.ONBOARDING) { inclusive = true }
-                    }
-                },
-                onNavigateToLogin = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(Routes.ONBOARDING) { inclusive = true }
-                    }
-                }
-            )
-        }
-
         // Démarrage : sur place (sans compte) ou livraison (connexion imposée).
         composable(Routes.ORDER_MODE) {
             OrderModeRoute(

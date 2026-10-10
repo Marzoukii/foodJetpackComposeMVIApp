@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cloche de restaurant, centrée dans la zone visible (72 dp) de l'icône du splash screen. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Poignée -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,33m-3.5,0a3.5,3.5 0,1 1,7 0a3.5,3.5 0,1 1,-7 0" />
+    <!-- Dôme -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M31,64A23,23 0,0 1,77 64Z" />
+    <!-- Plateau -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,67h52a2.5,2.5 0,0 1,0 5h-52a2.5,2.5 0,0 1,0 -5z" />
+</vector>
