@@ -144,7 +144,16 @@ fun AppNavGraph(startDestination: String, modifier: Modifier = Modifier) {
         composable(Routes.CART) {
             CartRoute(
                 onNavigateToCheckout = { navController.navigate(Routes.CHECKOUT) },
-                onNavigateToMenu = { navController.navigateToTab(BottomTab.Menu) },
+                onNavigateToMenu = {
+                    // Le panier est souvent ouvert depuis le menu : on y revient simplement.
+                    // navigateToTab restaurerait la pile sauvegardée [menu, panier] et ramènerait au panier.
+                    if (!navController.popBackStack(Routes.MENU, inclusive = false)) {
+                        navController.navigate(Routes.menu()) {
+                            popUpTo(Routes.HOME)
+                            launchSingleTop = true
+                        }
+                    }
+                },
                 onNavigateBack = { navController.popBackStack() }
             )
         }
