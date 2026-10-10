@@ -15,6 +15,9 @@ interface FoodService {
     @GET("filter.php")
     suspend fun getMealsByCategory(@Query("c") category: String): Response<MealsListDataJson>
 
+    @GET("filter.php")
+    suspend fun getMealsByIngredient(@Query("i") ingredient: String): Response<MealsListDataJson>
+
     @GET("lookup.php")
     suspend fun getMealDetails(@Query("i") mealId: String): Response<MealDetailsDataJson>
 
