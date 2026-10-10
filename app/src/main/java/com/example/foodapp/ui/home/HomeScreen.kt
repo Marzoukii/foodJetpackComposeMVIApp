@@ -36,6 +36,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.material3.LocalContentColor
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.R
@@ -340,7 +345,7 @@ private fun CategoriesSection(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(Spacing.s),
                     modifier = Modifier
-                        .width(72.dp)
+                        .width(80.dp)
                         .clip(RoundedCornerShape(12.dp))
                 ) {
                     Surface(
@@ -358,11 +363,17 @@ private fun CategoriesSection(
                                 .padding(8.dp)
                         )
                     }
-                    Text(
+                    // Noms longs (« Fruits de mer », « Accompagnement ») : 2 lignes et police réduite si besoin.
+                    BasicText(
                         categoryLabel(name),
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                            color = LocalContentColor.current
+                        ),
+                        maxLines = 2,
+                        autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = MaterialTheme.typography.bodySmall.fontSize),
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
