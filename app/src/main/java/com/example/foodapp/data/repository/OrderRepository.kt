@@ -4,8 +4,8 @@ import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.domain.mapper.OrderMapper
 import com.example.foodapp.domain.model.CartItemModel
 import com.example.foodapp.domain.model.OrderModel
-import com.example.foodapp.domain.model.OrderStatus
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderStatus
+import com.example.foodapp.domain.enums.OrderType
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseException

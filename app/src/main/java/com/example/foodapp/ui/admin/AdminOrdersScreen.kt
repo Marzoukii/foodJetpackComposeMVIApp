@@ -35,8 +35,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.R
 import com.example.foodapp.domain.model.OrderItemModel
 import com.example.foodapp.domain.model.OrderModel
-import com.example.foodapp.domain.model.OrderStatus
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderStatus
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.ui.components.BackTopBar
 import com.example.foodapp.ui.components.CategoryChip
 import com.example.foodapp.ui.components.EmptyView

@@ -1,7 +1,7 @@
 package com.example.foodapp.ui.admin
 
 import com.example.foodapp.domain.model.OrderModel
-import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.enums.OrderStatus
 import com.example.foodapp.ui.util.UiText
 
 data class AdminOrdersState(

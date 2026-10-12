@@ -1,7 +1,7 @@
 package com.example.foodapp.ui.cart
 
 import com.example.foodapp.domain.model.CartItemModel
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.domain.pricing.MealPricing
 
 data class CartState(

@@ -46,7 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.R
 import com.example.foodapp.domain.model.CategoryModel
 import com.example.foodapp.domain.model.MealModel
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.domain.model.UserModel
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.components.BottomTab

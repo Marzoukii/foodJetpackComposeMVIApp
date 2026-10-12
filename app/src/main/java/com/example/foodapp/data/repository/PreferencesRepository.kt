@@ -1,7 +1,7 @@
 package com.example.foodapp.data.repository
 
 import com.example.foodapp.data.local.AppPreferences
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

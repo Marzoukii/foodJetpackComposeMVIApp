@@ -3,7 +3,7 @@ package com.example.foodapp.ui.ordermode
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.domain.usecase.GetCurrentUserUseCase
 import com.example.foodapp.domain.usecase.GetTableNumberUseCase
 import com.example.foodapp.domain.usecase.SaveOrderModeUseCase

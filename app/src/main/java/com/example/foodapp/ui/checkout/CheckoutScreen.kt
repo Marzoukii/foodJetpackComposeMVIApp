@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.R
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.ui.components.AuthTextField
 import com.example.foodapp.ui.components.BackTopBar
 import com.example.foodapp.ui.components.BoucheeIcons

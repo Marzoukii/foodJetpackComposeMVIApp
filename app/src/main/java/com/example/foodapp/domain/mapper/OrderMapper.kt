@@ -2,8 +2,8 @@ package com.example.foodapp.domain.mapper
 
 import com.example.foodapp.domain.model.OrderItemModel
 import com.example.foodapp.domain.model.OrderModel
-import com.example.foodapp.domain.model.OrderStatus
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderStatus
+import com.example.foodapp.domain.enums.OrderType
 import com.google.firebase.database.DataSnapshot
 import javax.inject.Inject
 

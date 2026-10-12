@@ -3,7 +3,7 @@ package com.example.foodapp.ui.home
 import com.example.foodapp.domain.model.CategoryModel
 import com.example.foodapp.domain.model.MealItemModel
 import com.example.foodapp.domain.model.MealModel
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.domain.model.UserModel
 import com.example.foodapp.ui.util.UiText
 
