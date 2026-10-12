@@ -173,8 +173,7 @@ private fun AdminTeamPreview() {
                 currentUserId = "1",
                 members = listOf(
                     TeamMemberModel("1", "Chadi", "chadimarzouki@gmail.com", isAdmin = true),
-                    TeamMemberModel("2", "Admin Demo", "admin.demo@bouchee.app", isAdmin = false),
-                    TeamMemberModel("3", null, "client@exemple.fr", isAdmin = false)
+                    TeamMemberModel("2", "Admin Demo", "admin.demo@8100.app", isAdmin = false),
                 )
             ),
             snackbarHostState = remember { SnackbarHostState() },
