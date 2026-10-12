@@ -2,8 +2,8 @@ package com.example.foodapp.ui.util
 
 import androidx.annotation.StringRes
 import com.example.foodapp.R
-import com.example.foodapp.domain.model.OrderStatus
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderStatus
+import com.example.foodapp.domain.enums.OrderType
 
 @StringRes
 fun OrderStatus.labelRes(type: OrderType): Int = when (this) {

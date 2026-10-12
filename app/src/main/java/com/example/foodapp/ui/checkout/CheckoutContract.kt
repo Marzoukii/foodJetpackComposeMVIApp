@@ -2,7 +2,7 @@ package com.example.foodapp.ui.checkout
 
 import androidx.annotation.StringRes
 import com.example.foodapp.R
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.util.UiText
 

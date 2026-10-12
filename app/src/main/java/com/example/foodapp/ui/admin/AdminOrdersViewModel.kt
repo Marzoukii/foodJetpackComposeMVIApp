@@ -3,7 +3,7 @@ package com.example.foodapp.ui.admin
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.R
 import com.example.foodapp.data.NetworkResult
-import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.enums.OrderStatus
 import com.example.foodapp.domain.usecase.ObserveAllOrdersUseCase
 import com.example.foodapp.domain.usecase.UpdateOrderStatusUseCase
 import com.example.foodapp.ui.base.MviViewModel

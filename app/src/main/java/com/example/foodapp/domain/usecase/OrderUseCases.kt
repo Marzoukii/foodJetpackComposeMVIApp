@@ -4,7 +4,7 @@ import com.example.foodapp.data.NetworkResult
 import com.example.foodapp.data.repository.AuthRepository
 import com.example.foodapp.data.repository.OrderRepository
 import com.example.foodapp.domain.model.OrderModel
-import com.example.foodapp.domain.model.OrderStatus
+import com.example.foodapp.domain.enums.OrderStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch

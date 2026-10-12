@@ -1,8 +1,8 @@
 package com.example.foodapp.ui.confirmation
 
 import androidx.annotation.StringRes
-import com.example.foodapp.domain.model.OrderStatus
-import com.example.foodapp.domain.model.OrderType
+import com.example.foodapp.domain.enums.OrderStatus
+import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.ui.util.labelRes
 import com.example.foodapp.ui.util.subtitleRes
 
