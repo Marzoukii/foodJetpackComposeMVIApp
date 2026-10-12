@@ -7,11 +7,3 @@ data class TeamMemberModel(
     val email: String,
     val isAdmin: Boolean
 )
-
-object AdminConfig {
-    /**
-     * Comptes propriétaires : deviennent admin automatiquement à la connexion (e-mail vérifié).
-     * Doit rester identique à la liste de database.rules.json, qui seule fait foi.
-     */
-    val OWNER_EMAILS = setOf("chadimarzouki@gmail.com")
-}

@@ -1,7 +1,6 @@
 package com.example.foodapp.data.repository
 
 import com.example.foodapp.data.NetworkResult
-import com.example.foodapp.domain.model.AdminConfig
 import com.example.foodapp.domain.model.TeamMemberModel
 import com.example.foodapp.domain.model.UserModel
 import com.google.firebase.database.DataSnapshot
@@ -23,6 +22,8 @@ import javax.inject.Inject
  * - users/{uid} = { email, name } : annuaire des comptes, écrit par chaque compte à sa connexion
  * - admins/{uid} = true : écrit par un admin, ou par un compte propriétaire pour lui-même
  *   (les règles vérifient l'e-mail : l'app ne peut pas s'auto-promouvoir)
+ * - ownerEmails/{e-mail en minuscules, '.' remplacés par ','} = true : comptes propriétaires,
+ *   saisis dans la console et illisibles par l'app (aucune adresse dans l'APK ni le code)
  */
 class TeamRepository @Inject constructor(
     private val database: FirebaseDatabase
@@ -42,11 +43,10 @@ class TeamRepository @Inject constructor(
             }
             withTimeout(WRITE_TIMEOUT_MS) { usersRef.child(user.id).setValue(profile).await() }
         }
-        if (email.lowercase() in AdminConfig.OWNER_EMAILS) {
-            // Refusé par les règles si l'e-mail n'est pas vérifié : le compte reste simple client.
-            runCatching {
-                withTimeout(WRITE_TIMEOUT_MS) { adminsRef.child(user.id).setValue(true).await() }
-            }
+        // Seules les règles connaissent les propriétaires : refusé pour les autres comptes
+        // (ou si l'e-mail n'est pas vérifié), qui restent simples clients.
+        runCatching {
+            withTimeout(WRITE_TIMEOUT_MS) { adminsRef.child(user.id).setValue(true).await() }
         }
     }
 
