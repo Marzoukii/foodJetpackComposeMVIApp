@@ -16,10 +16,9 @@ import javax.inject.Inject
 
 class FoodMapper @Inject constructor() {
 
-    fun mapCategories(json: CategoriesDataJson?): CategoriesDataModel? {
-        if (json == null) return null
+    fun mapCategories(json: CategoriesDataJson?): CategoriesDataModel {
         return CategoriesDataModel(
-            categories = json.categories?.map { mapCategory(it) }
+            categories = json?.categories?.map { mapCategory(it) }
         )
     }
 
@@ -33,9 +32,8 @@ class FoodMapper @Inject constructor() {
     }
 
     fun mapMealsList(json: MealsListDataJson?): MealsListDataModel? {
-        if (json == null) return null
         return MealsListDataModel(
-            meals = json.meals?.map { mapMealItem(it) }
+            meals = json?.meals?.map { mapMealItem(it) }
         )
     }
 
@@ -47,10 +45,9 @@ class FoodMapper @Inject constructor() {
         )
     }
 
-    fun mapMealDetails(json: MealDetailsDataJson?): MealDetailsDataModel? {
-        if (json == null) return null
+    fun mapMealDetails(json: MealDetailsDataJson?): MealDetailsDataModel {
         return MealDetailsDataModel(
-            meals = json.meals?.map { mapMeal(it) }
+            meals = json?.meals?.map { mapMeal(it) }
         )
     }
 
