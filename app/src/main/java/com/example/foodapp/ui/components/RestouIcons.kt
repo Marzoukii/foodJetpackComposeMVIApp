@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
 /** Icônes du design (contour 2 dp, viewport 24). La couleur vient du `tint` de Icon. */
-object BoucheeIcons {
+object RestouIcons {
     val Back = strokeIcon("Back", "M15 18l-6-6 6-6")
     val Search = strokeIcon("Search", "M4 11a7 7 0 1 0 14 0a7 7 0 1 0 -14 0", "M20 20l-4-4")
     val Bag = strokeIcon("Bag", "M6 7h12l-1 13H7L6 7z", "M9 7a3 3 0 0 1 6 0")

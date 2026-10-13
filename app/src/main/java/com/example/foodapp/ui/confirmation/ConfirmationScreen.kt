@@ -38,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.R
 import com.example.foodapp.domain.enums.OrderStatus
 import com.example.foodapp.domain.enums.OrderType
-import com.example.foodapp.ui.components.BoucheeIcons
+import com.example.foodapp.ui.components.RestouIcons
 import com.example.foodapp.ui.components.OutlinedCard
 import com.example.foodapp.ui.components.PrimaryButton
 import com.example.foodapp.ui.theme.FoodAppTheme
@@ -102,7 +102,7 @@ fun ConfirmationScreen(
                         .clip(CircleShape)
                         .background(Success)
                 ) {
-                    Icon(BoucheeIcons.Check, contentDescription = null, tint = colors.onPrimary, modifier = Modifier.size(40.dp))
+                    Icon(RestouIcons.Check, contentDescription = null, tint = colors.onPrimary, modifier = Modifier.size(40.dp))
                 }
             }
 
@@ -151,7 +151,7 @@ private fun TimelineStep(step: OrderStep, isLast: Boolean) {
                 .clip(CircleShape)
             when (step.status) {
                 StepStatus.Done -> Box(dotModifier.background(Success), contentAlignment = Alignment.Center) {
-                    Icon(BoucheeIcons.Check, contentDescription = null, tint = colors.onPrimary, modifier = Modifier.size(14.dp))
+                    Icon(RestouIcons.Check, contentDescription = null, tint = colors.onPrimary, modifier = Modifier.size(14.dp))
                 }
                 StepStatus.Current -> Box(dotModifier.border(7.dp, colors.primary, CircleShape))
                 StepStatus.Upcoming -> Box(dotModifier.border(2.dp, colors.outlineVariant, CircleShape))

@@ -106,7 +106,7 @@ fun AuthTextField(
                     modifier = Modifier.focusProperties { canFocus = false }
                 ) {
                     Icon(
-                        imageVector = if (passwordVisible) BoucheeIcons.EyeOff else BoucheeIcons.Eye,
+                        imageVector = if (passwordVisible) RestouIcons.EyeOff else RestouIcons.Eye,
                         contentDescription = stringResource(if (passwordVisible) R.string.component_hide_password else R.string.component_show_password),
                         tint = colors.onSurfaceVariant,
                         modifier = Modifier.size(22.dp)

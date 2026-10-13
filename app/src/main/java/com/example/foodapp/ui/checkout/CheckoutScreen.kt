@@ -51,7 +51,7 @@ import com.example.foodapp.R
 import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.ui.components.AuthTextField
 import com.example.foodapp.ui.components.BackTopBar
-import com.example.foodapp.ui.components.BoucheeIcons
+import com.example.foodapp.ui.components.RestouIcons
 import com.example.foodapp.ui.components.OutlinedCard
 import com.example.foodapp.ui.components.PriceLine
 import com.example.foodapp.ui.components.PriceSummary
@@ -142,7 +142,7 @@ fun CheckoutScreen(
                         onSelect = { onIntent(CheckoutIntent.DeliveryModeSelected(it)) }
                     )
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
-                        Icon(BoucheeIcons.Clock, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                        Icon(RestouIcons.Clock, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                         Text(
                             text = if (state.deliveryMode == DeliveryMode.Asap) {
                                 stringResource(R.string.checkout_delivery_asap_hint)
@@ -166,7 +166,7 @@ fun CheckoutScreen(
                         imeAction = ImeAction.Done
                     )
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
-                        Icon(BoucheeIcons.Table, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                        Icon(RestouIcons.Table, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                         Text(
                             stringResource(R.string.checkout_table_hint),
                             style = MaterialTheme.typography.bodySmall,
@@ -181,7 +181,7 @@ fun CheckoutScreen(
                     PaymentOption(
                         method = method,
                         orderType = state.orderType,
-                        icon = if (method == PaymentMethod.Card) BoucheeIcons.Card else BoucheeIcons.Cash,
+                        icon = if (method == PaymentMethod.Card) RestouIcons.Card else RestouIcons.Cash,
                         selected = method == state.paymentMethod,
                         onClick = { onIntent(CheckoutIntent.PaymentMethodSelected(method)) }
                     )
@@ -239,7 +239,7 @@ private fun AddressCard(address: String, onEdit: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            IconTile(BoucheeIcons.Pin, colors.primaryContainer, colors.primary)
+            IconTile(RestouIcons.Pin, colors.primaryContainer, colors.primary)
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(stringResource(R.string.checkout_home), style = MaterialTheme.typography.titleSmall)
                 Text(
@@ -265,7 +265,7 @@ private fun SignInCard(onSignIn: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            IconTile(BoucheeIcons.User, colors.primaryContainer, colors.primary)
+            IconTile(RestouIcons.User, colors.primaryContainer, colors.primary)
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(stringResource(R.string.checkout_account_required), style = MaterialTheme.typography.titleSmall)
                 Text(

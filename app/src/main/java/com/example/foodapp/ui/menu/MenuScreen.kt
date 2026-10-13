@@ -38,7 +38,7 @@ import com.example.foodapp.domain.model.MealItemModel
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.components.BackTopBar
 import com.example.foodapp.ui.components.BottomTab
-import com.example.foodapp.ui.components.BoucheeBottomBar
+import com.example.foodapp.ui.components.RestouBottomBar
 import com.example.foodapp.ui.components.CategoryChip
 import com.example.foodapp.ui.components.EmptyView
 import com.example.foodapp.ui.components.ErrorView
@@ -110,7 +110,7 @@ fun MenuScreen(
                         onClick = { onIntent(MenuIntent.CartClicked) }
                     )
                 }
-                BoucheeBottomBar(BottomTab.Menu, state.cartCount, onTabSelected)
+                RestouBottomBar(BottomTab.Menu, state.cartCount, onTabSelected)
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }

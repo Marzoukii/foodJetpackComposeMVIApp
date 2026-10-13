@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.R
-import com.example.foodapp.ui.components.BoucheeIcons
+import com.example.foodapp.ui.components.RestouIcons
 import com.example.foodapp.ui.components.OutlinedCard
 import com.example.foodapp.ui.theme.FoodAppTheme
 import com.example.foodapp.ui.theme.Spacing
@@ -102,14 +102,14 @@ fun OrderModeScreen(
             }
 
             ModeCard(
-                icon = BoucheeIcons.Table,
+                icon = RestouIcons.Table,
                 title = stringResource(R.string.order_type_dine_in),
                 subtitle = stringResource(R.string.order_mode_dine_in_subtitle),
                 enabled = !state.isLoading,
                 onClick = { onIntent(OrderModeIntent.DineInClicked) }
             )
             ModeCard(
-                icon = BoucheeIcons.Pin,
+                icon = RestouIcons.Pin,
                 title = stringResource(R.string.order_type_delivery),
                 subtitle = stringResource(R.string.order_mode_delivery_subtitle),
                 enabled = !state.isLoading,
