@@ -38,7 +38,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.foodapp.R
 import com.example.foodapp.domain.model.MealModel
-import com.example.foodapp.ui.components.BoucheeIcons
+import com.example.foodapp.ui.components.RestouIcons
 import com.example.foodapp.ui.components.CircleIconButton
 import com.example.foodapp.ui.components.ErrorView
 import com.example.foodapp.ui.components.LoadingView
@@ -99,7 +99,7 @@ fun MealDetailsScreen(
             state.isLoading -> LoadingView(Modifier.padding(padding))
             state.error != null -> Column(Modifier.padding(padding).statusBarsPadding()) {
                 Box(Modifier.padding(Spacing.xl)) {
-                    CircleIconButton(BoucheeIcons.Back, stringResource(R.string.common_back), onClick = { onIntent(MealDetailsIntent.BackClicked) })
+                    CircleIconButton(RestouIcons.Back, stringResource(R.string.common_back), onClick = { onIntent(MealDetailsIntent.BackClicked) })
                 }
                 ErrorView(message = state.error.asString(), onRetry = { onIntent(MealDetailsIntent.LoadMeal) })
             }
@@ -136,7 +136,7 @@ private fun MealDetailsContent(
         ) {
             MealImage(url = meal.thumbnail, contentDescription = meal.name, modifier = Modifier.fillMaxSize())
             CircleIconButton(
-                icon = BoucheeIcons.Back,
+                icon = RestouIcons.Back,
                 contentDescription = stringResource(R.string.common_back),
                 onClick = { onIntent(MealDetailsIntent.BackClicked) },
                 bordered = false,

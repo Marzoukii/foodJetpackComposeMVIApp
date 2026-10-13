@@ -1,7 +1,6 @@
 package com.example.foodapp.ui.home
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,8 +49,8 @@ import com.example.foodapp.domain.enums.OrderType
 import com.example.foodapp.domain.model.UserModel
 import com.example.foodapp.domain.pricing.MealPricing
 import com.example.foodapp.ui.components.BottomTab
-import com.example.foodapp.ui.components.BoucheeBottomBar
-import com.example.foodapp.ui.components.BoucheeIcons
+import com.example.foodapp.ui.components.RestouBottomBar
+import com.example.foodapp.ui.components.RestouIcons
 import com.example.foodapp.ui.components.CartIconButton
 import com.example.foodapp.ui.components.CircleIconButton
 import com.example.foodapp.ui.components.ErrorView
@@ -104,7 +103,7 @@ fun HomeScreen(
     onTabSelected: (BottomTab) -> Unit
 ) {
     Scaffold(
-        bottomBar = { BoucheeBottomBar(BottomTab.Home, state.cartCount, onTabSelected) }
+        bottomBar = { RestouBottomBar(BottomTab.Home, state.cartCount, onTabSelected) }
     ) { padding ->
         when {
             state.isLoading && state.categories.isEmpty() -> LoadingView(Modifier.padding(padding))
@@ -214,7 +213,7 @@ private fun HomeHeader(
             )
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Icon(
-                    if (isDineIn) BoucheeIcons.Table else BoucheeIcons.Pin,
+                    if (isDineIn) RestouIcons.Table else RestouIcons.Pin,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
@@ -232,7 +231,7 @@ private fun HomeHeader(
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s)) {
-            CircleIconButton(BoucheeIcons.User, contentDescription = stringResource(R.string.home_my_account), onClick = onAccountClick)
+            CircleIconButton(RestouIcons.User, contentDescription = stringResource(R.string.home_my_account), onClick = onAccountClick)
             CartIconButton(count = cartCount, onClick = onCartClick)
         }
     }
@@ -250,7 +249,7 @@ private fun AccountDialog(
     val colors = MaterialTheme.colorScheme
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(BoucheeIcons.User, contentDescription = null, tint = colors.primary) },
+        icon = { Icon(RestouIcons.User, contentDescription = null, tint = colors.primary) },
         title = {
             Text(
                 when {
@@ -273,7 +272,7 @@ private fun AccountDialog(
         },
         confirmButton = {
             TextButton(onClick = onSignOut) {
-                Icon(BoucheeIcons.Logout, contentDescription = null, tint = colors.primary, modifier = Modifier.size(18.dp))
+                Icon(RestouIcons.Logout, contentDescription = null, tint = colors.primary, modifier = Modifier.size(18.dp))
                 Text(stringResource(R.string.common_sign_out), color = colors.primary, modifier = Modifier.padding(start = Spacing.s))
             }
         },

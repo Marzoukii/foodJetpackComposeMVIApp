@@ -27,7 +27,7 @@ private val LightColors = lightColorScheme(
     error = Error
 )
 
-val BoucheeShapes = Shapes(
+val RestouShapes = Shapes(
     small = RoundedCornerShape(12.dp),
     medium = RoundedCornerShape(16.dp),
     large = RoundedCornerShape(20.dp),
@@ -50,7 +50,7 @@ fun FoodAppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = LightColors,
         typography = Typography,
-        shapes = BoucheeShapes,
+        shapes = RestouShapes,
         content = content
     )
 }

@@ -203,7 +203,7 @@ private fun AdminOrdersPreview() {
         createdAt = 1_760_000_000_000,
         statusHistory = emptyMap(),
         orderType = OrderType.DELIVERY,
-        address = "12 rue de la Paix, Paris",
+        address = "Tunis",
         tableNumber = null,
         itemCount = 3,
         items = listOf(

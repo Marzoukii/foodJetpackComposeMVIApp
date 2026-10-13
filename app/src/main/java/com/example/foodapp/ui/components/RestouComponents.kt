@@ -3,7 +3,6 @@ package com.example.foodapp.ui.components
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -129,7 +128,7 @@ fun BackTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
-        CircleIconButton(BoucheeIcons.Back, contentDescription = stringResource(R.string.common_back), onClick = onBack)
+        CircleIconButton(RestouIcons.Back, contentDescription = stringResource(R.string.common_back), onClick = onBack)
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
@@ -206,7 +205,7 @@ fun QuantityStepper(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        StepperButton(BoucheeIcons.Minus, stringResource(R.string.common_remove), onDecrement, size, colors.surfaceContainer, colors.onSurface)
+        StepperButton(RestouIcons.Minus, stringResource(R.string.common_remove), onDecrement, size, colors.surfaceContainer, colors.onSurface)
         Text(
             text = quantity.toString(),
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
@@ -214,7 +213,7 @@ fun QuantityStepper(
             modifier = Modifier.width(size.valueWidth)
         )
         StepperButton(
-            BoucheeIcons.Plus, stringResource(R.string.common_add), onIncrement, size,
+            RestouIcons.Plus, stringResource(R.string.common_add), onIncrement, size,
             if (accentIncrement) colors.primary else colors.surfaceContainer,
             if (accentIncrement) colors.onPrimary else colors.onSurface
         )
@@ -261,7 +260,7 @@ fun AddToCartButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
         modifier = modifier.size(44.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Icon(BoucheeIcons.Plus, contentDescription = stringResource(R.string.component_add_to_cart), modifier = Modifier.size(22.dp))
+            Icon(RestouIcons.Plus, contentDescription = stringResource(R.string.component_add_to_cart), modifier = Modifier.size(22.dp))
         }
     }
 }
@@ -400,7 +399,7 @@ fun SearchField(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.m)
     ) {
-        Icon(BoucheeIcons.Search, contentDescription = null, tint = colors.onSurfaceVariant, modifier = Modifier.size(22.dp))
+        Icon(RestouIcons.Search, contentDescription = null, tint = colors.onSurfaceVariant, modifier = Modifier.size(22.dp))
         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
             if (value.isEmpty()) {
                 Text(placeholder, style = MaterialTheme.typography.bodyMedium.copy(fontSize = PriceTextStyle.fontSize * 0.88f), color = colors.onSurfaceVariant)
@@ -467,14 +466,14 @@ fun StickyBottomBar(modifier: Modifier = Modifier, content: @Composable RowScope
 // ---------- Navigation du bas ----------
 
 enum class BottomTab(@StringRes val labelRes: Int, val icon: ImageVector) {
-    Home(R.string.tab_home, BoucheeIcons.Home),
-    Menu(R.string.tab_menu, BoucheeIcons.Menu),
-    Cart(R.string.tab_cart, BoucheeIcons.Bag)
+    Home(R.string.tab_home, RestouIcons.Home),
+    Menu(R.string.tab_menu, RestouIcons.Menu),
+    Cart(R.string.tab_cart, RestouIcons.Bag)
 }
 
 /** BottomNav : NavigationBar, indicateur primaryContainer, badge sur Panier. */
 @Composable
-fun BoucheeBottomBar(selected: BottomTab, cartCount: Int, onTabSelected: (BottomTab) -> Unit) {
+fun RestouBottomBar(selected: BottomTab, cartCount: Int, onTabSelected: (BottomTab) -> Unit) {
     val colors = MaterialTheme.colorScheme
     Column {
         Box(
@@ -515,7 +514,7 @@ fun BoucheeBottomBar(selected: BottomTab, cartCount: Int, onTabSelected: (Bottom
 @Composable
 fun CartIconButton(count: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
-        CircleIconButton(BoucheeIcons.Bag, contentDescription = stringResource(R.string.component_cart_with_count, pluralStringResource(R.plurals.common_articles, count, count)), onClick = onClick)
+        CircleIconButton(RestouIcons.Bag, contentDescription = stringResource(R.string.component_cart_with_count, pluralStringResource(R.plurals.common_articles, count, count)), onClick = onClick)
         if (count > 0) {
             Box(
                 contentAlignment = Alignment.Center,
