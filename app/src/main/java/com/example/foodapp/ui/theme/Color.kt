@@ -2,7 +2,6 @@ package com.example.foodapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Jetons du design system « Bouchée » (rôles du ColorScheme Material 3)
 val Primary = Color(0xFFD9381E)
 val OnPrimary = Color(0xFFFFFFFF)
 val PrimaryContainer = Color(0xFFFFE1D9)

@@ -44,7 +44,6 @@ object Spacing {
     val xxxl = 32.dp
 }
 
-/** Thème « Bouchée » : mode clair uniquement pour l'instant (le mode sombre viendra plus tard). */
 @Composable
 fun FoodAppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
